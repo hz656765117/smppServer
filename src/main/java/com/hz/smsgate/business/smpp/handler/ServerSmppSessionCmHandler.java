@@ -7,7 +7,6 @@ import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.base.smpp.utils.PduUtil;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
-import java.math.BigInteger;
 
 /**
  * @Auther: huangzhuo
@@ -45,7 +43,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 	private WeakReference<SmppSession> sessionRef;
 
 	public ServerSmppSessionCmHandler(SmppSession session) {
-		this.sessionRef = new WeakReference<SmppSession>(session);
+		this.sessionRef = new WeakReference<>(session);
 	}
 
 	public ServerSmppSessionCmHandler() {
@@ -76,29 +74,32 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 		PduResponse response = pduRequest.createResponse();
 
 
-		// mimic how long processing could take on a slower smsc
 		try {
 			if (pduRequest.isRequest()) {
 				if (pduRequest.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM) {
-
 					SubmitSmResp submitResp = (SubmitSmResp) response;
 					SubmitSm submitSm = (SubmitSm) pduRequest;
-//					//通道替换
-//					submitSm = PduUtil.rewriteSmSourceAddress(submitSm);
 
 					String msgid = SmppUtils.getMsgId();
 					submitSm.setTempMsgId(msgid);
-					logger.info("这是短短信,msgid为:{}", msgid);
+
+					String systemId = "";
+					SmppSession session = this.sessionRef.get();
+					if (session != null) {
+						systemId = session.getConfiguration().getSystemId();
+						submitSm.setSystemId(systemId);
+					}
+
+					logger.info("当前短信的systemid为:{},msgid为:{},", systemId, msgid);
 
 
 					try {
 						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgid);
 						serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM, submitSm);
 					} catch (Exception e) {
-						logger.error("-----------短短信下行接收，加入队列异常。------------- {}", e);
+						logger.error("-----------短短信下行接收，加入队列异常。------------- ", e);
 					}
 
-//					String msgId16 = new BigInteger(msgid, 10).toString(16);
 					submitResp.setMessageId(msgid);
 					submitResp.calculateAndSetCommandLength();
 					return submitResp;
