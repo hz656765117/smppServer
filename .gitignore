@@ -4,6 +4,8 @@ HELP.md
 */target/
 src/test/*
 
+/logger/
+
 ### STS ###
 .apt_generated
 .classpath
