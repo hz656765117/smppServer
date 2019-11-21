@@ -6,6 +6,7 @@ import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.RptRedisConsumer;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
@@ -82,94 +83,17 @@ public class PduUtils {
 	}
 
 
-	/**
-	 * 根据通道获取用户名
-	 *
-	 * @param sendId 通道id
-	 * @return
-	 */
-	public static String getSystemIdBySendId(String sendId) {
-
-		SmppSessionConfiguration smppSessionConfiguration = (SmppSessionConfiguration) pduUtils.redisUtil.hmGet("configMap", sendId);
-
-		if (smppSessionConfiguration == null) {
-			String key = getKey(sendId);
-			smppSessionConfiguration = (SmppSessionConfiguration) pduUtils.redisUtil.hmGet("configMap", key);
-		}
-		if (smppSessionConfiguration == null) {
-			return null;
-		}
-		String systemId = smppSessionConfiguration.getSystemId();
-		return systemId;
-	}
 
 
-	/**
-	 * 短信内容GSM编码  cm运营商的需要编码
-	 *
-	 * @param sm 下行短信对象
-	 * @return
-	 */
-	public static SubmitSm encodeGsm(SubmitSm sm) {
-		String sendId = sm.getSourceAddress().getAddress();
-		String systemId = getSystemIdBySendId(sendId);
-
-		//cm资源需要GSM格式编码
-		if (StaticValue.SYSTEMID_CM.equals(systemId)) {
-			onlyEncodeGsm(sm);
-		}
-		return sm;
-	}
-
-	/**
-	 * 短信内容Gsm编码
-	 *
-	 * @param sm 下行短信对象
-	 * @return
-	 */
-	public static SubmitSm onlyEncodeGsm(SubmitSm sm) {
-		byte[] shortMessage = sm.getShortMessage();
-		String content = new String(shortMessage);
-		LOGGER.info("短短信的内容为{},下行号码为{}，通道为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
-		try {
-			byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
-			sm.setShortMessage(textBytes);
-		} catch (Exception e) {
-			LOGGER.error("短信内容编码异常", e);
-		}
-		LOGGER.info("短短信编码后的内容为{},下行号码为{}，通道为{}", new String(content.getBytes()), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress());
-
-		sm.calculateAndSetCommandLength();
-		return sm;
-	}
 
 
-	/**
-	 * 重写下行对象
-	 *
-	 * @param sm
-	 * @return
-	 */
-	public static SubmitSm rewriteSubmitSm(SubmitSm sm) {
-		//短信下行内容编码
-		sm = PduUtils.encodeGsm(sm);
-		//通道555的短信去掉前面两个00
-		sm = PduUtils.removeZero(sm);
-		return sm;
-	}
 
 
-	public static String getKey(String sendId) {
-		Map<String, String> channlRel = StaticValue.CHANNL_REL;
 
-		for (Map.Entry<String, String> entry : channlRel.entrySet()) {
-			if (sendId.equals(entry.getValue())) {
-				sendId = entry.getKey();
-				break;
-			}
-		}
-		return sendId;
-	}
+
+
+
+
 
 
 	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
@@ -178,7 +102,8 @@ public class PduUtils {
 		String channel = deliverSm.getDestAddress().getAddress();
 		String systemId = deliverSm.getSystemId();
 
-		String[] strings = StaticValue.CHANNL_SP_REL.get(channel);
+
+		String[] strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, channel));
 		String pwd = strings[4];
 
 

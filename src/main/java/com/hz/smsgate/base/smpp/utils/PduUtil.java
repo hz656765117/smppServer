@@ -71,19 +71,6 @@ public class PduUtil {
 		return ((commandId & SmppConstants.PDU_CMD_ID_RESP_MASK) == SmppConstants.PDU_CMD_ID_RESP_MASK);
 	}
 
-	//重写下行对象，将通道更改为正确的
-	public static SubmitSm rewriteSmSourceAddress(SubmitSm sm) {
-		Address sourceAddress = sm.getSourceAddress();
-		int beforeLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		String gwChannel = StaticValue.CHANNL_REL.get(sourceAddress.getAddress());
-		if (!StringUtils.isBlank(gwChannel)) {
-			sourceAddress.setAddress(gwChannel);
-		}
 
-		int afterLen = PduUtil.calculateByteSizeOfAddress(sourceAddress);
-		sm.setCommandLength(sm.getCommandLength() - beforeLen + afterLen);
-		sm.setSourceAddress(sourceAddress);
-		return sm;
-	}
 
 }

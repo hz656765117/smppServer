@@ -82,45 +82,8 @@ public class RptRedisConsumer implements Runnable {
 		}
 	}
 
-	//获取原通道
-	public String getRealChannel(String gwChannel) {
-		if (StringUtils.isBlank(gwChannel)) {
-			return gwChannel;
-		}
-		for (Map.Entry<String, String> entry : StaticValue.CHANNL_REL.entrySet()) {
-			if (gwChannel.equals(entry.getValue())) {
-				return entry.getKey();
-			}
-		}
-		return gwChannel;
-	}
-
-	/**
-	 * @param deliverSm
-	 * @return
-	 */
-	public DeliverSm reWriteDeliverSm(DeliverSm deliverSm) {
-		//替换真实通道
-		Address destAddress = deliverSm.getDestAddress();
-		String realChannel = getRealChannel(destAddress.getAddress());
-		destAddress.setAddress(realChannel);
-		deliverSm.setDestAddress(destAddress);
 
 
-		//补齐号码
-		Address sourceAddress = deliverSm.getSourceAddress();
-		String address1 = sourceAddress.getAddress();
-		if (!address1.startsWith("0")) {
-			address1 = "00" + address1;
-			sourceAddress.setAddress(address1);
-			deliverSm.setSourceAddress(sourceAddress);
-
-		}
-
-
-		deliverSm.calculateAndSetCommandLength();
-		return deliverSm;
-	}
 
 
 	public void sendDeliverSm(DeliverSm deliverSm) {
@@ -185,7 +148,6 @@ public class RptRedisConsumer implements Runnable {
 						deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
 					}
 
-//					String msgId16 = new BigInteger(split[0], 10).toString(16);
 					String realMsgid = split[0];
 					//替换messageId
 					deliveryReceipt.setMessageId(realMsgid);
@@ -193,14 +155,9 @@ public class RptRedisConsumer implements Runnable {
 					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 					deliverSm.setShortMessage(bytes);
 
-
 					Tlv tlv = getTlv(realMsgid);
 					deliverSm.setOptionalParameter(tlv);
-
 					deliverSm.calculateAndSetCommandLength();
-
-//					deliverSm = reWrite(deliverSm);
-
 
 					removeMap.put(entry.getKey(), entry.getValue());
 					smppSession.sendRequestPdu(deliverSm, 10000, true);
@@ -218,14 +175,8 @@ public class RptRedisConsumer implements Runnable {
 			}
 		} else {
 			try {
-
 				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 				deliverSm.setShortMessage(bytes);
-
-//				Tlv tlv = getTlv(deliveryReceipt.getMessageId());
-//				deliverSm.setOptionalParameter(tlv);
-
-
 				deliverSm.calculateAndSetCommandLength();
 
 				smppSession.sendRequestPdu(deliverSm, 10000, true);
@@ -247,40 +198,7 @@ public class RptRedisConsumer implements Runnable {
 		return tlv;
 	}
 
-	public static DeliverSm reWrite(DeliverSm deliverSm) {
 
-		DeliveryReceipt dr;
-		try {
-
-			byte[] shortMessage = deliverSm.getShortMessage();
-			dr = DeliveryReceipt.parseShortMessage(new String(shortMessage), DateTimeZone.UTC, false);
-			String messageId = dr.getMessageId();
-
-			ArrayList<Tlv> optionalParameters = deliverSm.getOptionalParameters();
-			Tlv tlv = optionalParameters.get(0);
-			short tag = tlv.getTag();
-			byte[] value = messageId.getBytes();
-			String tagName = tlv.getTagName();
-
-			Tlv newTlv = new Tlv(tag, value, tagName);
-
-			deliverSm.setOptionalParameter(newTlv);
-			deliverSm.calculateAndSetCommandLength();
-
-
-			ChannelBuffer encode = transcoder.encode(deliverSm);
-			String hexString = BufferHelper.createHexString(encode);
-			ChannelBuffer cb = BufferHelper.createBuffer(hexString);
-			Pdu ss = transcoder.decode(cb);
-			deliverSm = (DeliverSm) ss;
-
-
-		} catch (Exception e) {
-			LOGGER.error("{}-重组tlv异常", Thread.currentThread().getName(), e);
-		}
-		return deliverSm;
-
-	}
 
 
 }

@@ -3,6 +3,7 @@ package com.hz.smsgate.base.utils;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -61,9 +62,9 @@ public class FileUtils {
 	}
 
 
-	public static Map<String, String[]> getSpConfigs(String fileName) {
+	public static Map<SessionKey, String[]> getSpConfigs(String fileName) {
 		List<String> strings = readFileByLines(fileName);
-		Map<String, String[]> configMap = new LinkedHashMap<>(strings.size());
+		Map<SessionKey, String[]> configMap = new LinkedHashMap<>(strings.size());
 		for (int i = 0; i < strings.size(); i++) {
 			String str = strings.get(i);
 			if (StringUtils.isBlank(str)) {
@@ -73,8 +74,9 @@ public class FileUtils {
 
 			try {
 				if (split != null && split.length > 0) {
+
 					String channel = split[0].trim();
-					configMap.put(channel, split);
+					configMap.put(new SessionKey(split[3], channel), split);
 				}
 			} catch (Exception e) {
 				logger.error("sp账号解析异常！,过滤该配置", e);
