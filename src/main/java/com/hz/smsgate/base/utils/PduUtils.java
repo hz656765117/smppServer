@@ -176,7 +176,7 @@ public class PduUtils {
 		SmppSession smppSession = null;
 		//根据通道获取session
 		String channel = deliverSm.getDestAddress().getAddress();
-		String systemId = getSystemIdBySendId(channel);
+		String systemId = deliverSm.getSystemId();
 
 		String[] strings = StaticValue.CHANNL_SP_REL.get(channel);
 		String pwd = strings[4];
