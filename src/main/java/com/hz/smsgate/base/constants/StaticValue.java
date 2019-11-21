@@ -79,6 +79,9 @@ public class StaticValue {
 	public static String CHANNEL_MK_8 = "7772";
 	public static String CHANNEL_MK_9 = "7773";
 
+	public static String CHANNEL_MK_10 = "7774";
+	public static String CHANNEL_MK_11 = "7775";
+
 
 	public static String CHANNEL_YN_1 = "668";
 
@@ -143,12 +146,14 @@ public class StaticValue {
 
 		CHANNL_REL.put(CHANNEL_MK_2, new SessionKey(SYSTEMID_MK_1, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_6, new SessionKey(SYSTEMID_MK_1, "Tantan"));
+		CHANNL_REL.put(CHANNEL_MK_10, new SessionKey(SYSTEMID_MK_1, "haaloo"));
 
 		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey(SYSTEMID_MK_2, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_7, new SessionKey(SYSTEMID_MK_2, "Tantan"));
 
 		CHANNL_REL.put(CHANNEL_MK_4, new SessionKey(SYSTEMID_MK_3, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_8, new SessionKey(SYSTEMID_MK_3, "Tantan"));
+		CHANNL_REL.put(CHANNEL_MK_11, new SessionKey(SYSTEMID_MK_3, "haaloo"));
 
 		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey(SYSTEMID_MK_4, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_9, new SessionKey(SYSTEMID_MK_4, "Tantan"));
