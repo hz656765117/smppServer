@@ -146,14 +146,14 @@ public class StaticValue {
 
 		CHANNL_REL.put(CHANNEL_MK_2, new SessionKey(SYSTEMID_MK_1, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_6, new SessionKey(SYSTEMID_MK_1, "Tantan"));
-		CHANNL_REL.put(CHANNEL_MK_10, new SessionKey(SYSTEMID_MK_1, "haaloo"));
+		CHANNL_REL.put(CHANNEL_MK_10, new SessionKey(SYSTEMID_MK_1, "Haaloo"));
 
 		CHANNL_REL.put(CHANNEL_MK_3, new SessionKey(SYSTEMID_MK_2, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_7, new SessionKey(SYSTEMID_MK_2, "Tantan"));
 
 		CHANNL_REL.put(CHANNEL_MK_4, new SessionKey(SYSTEMID_MK_3, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_8, new SessionKey(SYSTEMID_MK_3, "Tantan"));
-		CHANNL_REL.put(CHANNEL_MK_11, new SessionKey(SYSTEMID_MK_3, "haaloo"));
+		CHANNL_REL.put(CHANNEL_MK_11, new SessionKey(SYSTEMID_MK_3, "Haaloo"));
 
 		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey(SYSTEMID_MK_4, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_9, new SessionKey(SYSTEMID_MK_4, "Tantan"));
@@ -177,6 +177,23 @@ public class StaticValue {
 		CHANNEL_MK_LIST.add(CHANNEL_MK_5);
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_5).getSenderId());
 
+		CHANNEL_MK_LIST.add(CHANNEL_MK_6);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_6).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_7);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_7).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_8);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_8).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_9);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_9).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_10);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_10).getSenderId());
+
+		CHANNEL_MK_LIST.add(CHANNEL_MK_11);
+		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
 
 
