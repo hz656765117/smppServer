@@ -1,6 +1,5 @@
 package com.hz.smsgate.business.smpp.handler;
 
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.exception.SmppProcessingException;
 import com.hz.smsgate.base.smpp.pdu.BaseBind;
@@ -35,7 +34,6 @@ public class CmSmppServerHandler implements SmppServerHandler {
 		SmppSessionHandler smppSessionHandler;
 
 		smppSessionHandler = new ServerSmppSessionCmHandler(session);
-
 
 		session.serverReady(smppSessionHandler);
 	}

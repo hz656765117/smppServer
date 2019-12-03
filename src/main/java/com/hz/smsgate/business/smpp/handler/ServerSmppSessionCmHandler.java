@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.smpp.handler;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
@@ -91,11 +92,9 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 					}
 
 					logger.info("当前短信的systemid为:{},msgid为:{},", systemId, msgid);
-
-
 					try {
 						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgid);
-						serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM, submitSm);
+						putSelfQueue(submitSm);
 					} catch (Exception e) {
 						logger.error("-----------短短信下行接收，加入队列异常。------------- ", e);
 					}
@@ -123,6 +122,33 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 			return response;
 		}
 	}
+
+
+	/**
+	 * 将提交过来的短信分别放到各自的队列中
+	 *
+	 * @param submitSm 下行短信对象
+	 */
+	public void putSelfQueue(SubmitSm submitSm) {
+		String senderId = submitSm.getSourceAddress().getAddress();
+
+		//营销
+		if (StaticValue.CHANNEL_YX_LIST.contains(senderId)) {
+			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_YX, submitSm);
+			//通知
+		} else if (StaticValue.CHANNEL_TZ_LIST.contains(senderId)) {
+			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_TZ, submitSm);
+			//opt  验证码
+		} else if (StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, submitSm);
+			//没有分类的 放到营销短信中去
+		} else {
+			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_YX, submitSm);
+
+		}
+
+	}
+
 
 	@Override
 	public void fireExpectedPduResponseReceived(PduAsyncResponse pduAsyncResponse) {

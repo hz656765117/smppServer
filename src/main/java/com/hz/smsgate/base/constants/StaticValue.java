@@ -30,16 +30,18 @@ public class StaticValue {
 	public static int ENQUIRE_LINK_TIME = 20000;
 
 
-
-
-
-
-
-
-
-
-
-
+	/**
+	 * opt通道
+	 */
+	public static List<String> CHANNEL_OPT_LIST = new ArrayList<>();
+	/**
+	 * 营销通道
+	 */
+	public static List<String> CHANNEL_YX_LIST = new ArrayList<>();
+	/**
+	 * 通知通道
+	 */
+	public static List<String> CHANNEL_TZ_LIST = new ArrayList<>();
 
 
 
@@ -64,6 +66,8 @@ public class StaticValue {
 	public static String SYSTEMID_MK_2 = "HP02";
 	public static String SYSTEMID_MK_3 = "HP03";
 	public static String SYSTEMID_MK_4 = "HP04";
+	public static String SYSTEMID_MK_5 = "HP0101";
+
 
 	public static String SYSTEMID_ALEX = "Alex";
 
@@ -81,6 +85,10 @@ public class StaticValue {
 
 	public static String CHANNEL_MK_10 = "7774";
 	public static String CHANNEL_MK_11 = "7775";
+
+	public static String CHANNEL_MK_12 = "7776";
+	public static String CHANNEL_MK_13 = "7777";
+	public static String CHANNEL_MK_14 = "7778";
 
 
 	public static String CHANNEL_YN_1 = "668";
@@ -158,6 +166,10 @@ public class StaticValue {
 		CHANNL_REL.put(CHANNEL_MK_5, new SessionKey(SYSTEMID_MK_4, "etracker"));
 		CHANNL_REL.put(CHANNEL_MK_9, new SessionKey(SYSTEMID_MK_4, "Tantan"));
 
+		CHANNL_REL.put(CHANNEL_MK_12, new SessionKey(SYSTEMID_MK_5, "etracker"));
+		CHANNL_REL.put(CHANNEL_MK_13, new SessionKey(SYSTEMID_MK_5, "Tantan"));
+		CHANNL_REL.put(CHANNEL_MK_14, new SessionKey(SYSTEMID_MK_5, "Haaloo"));
+
 		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey(SYSTEMID_ALEX, "Alex"));
 
 
@@ -196,6 +208,28 @@ public class StaticValue {
 		CHANNEL_MK_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
 
+
+		CHANNEL_OPT_LIST.add(CHANNEL_CM_6);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_CM_6).getSenderId());
+
+		CHANNEL_OPT_LIST.add(CHANNEL_MK_2);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_2).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_MK_6);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_6).getSenderId());
+		CHANNEL_OPT_LIST.add(CHANNEL_MK_10);
+		CHANNEL_OPT_LIST.add(CHANNL_REL.get(CHANNEL_MK_10).getSenderId());
+
+		CHANNEL_YX_LIST.add(CHANNEL_YN_1);
+		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_YN_1).getSenderId());
+
+		CHANNEL_YX_LIST.add(CHANNEL_MK_4);
+		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_MK_4).getSenderId());
+
+		CHANNEL_YX_LIST.add(CHANNEL_MK_8);
+		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_MK_8).getSenderId());
+
+		CHANNEL_YX_LIST.add(CHANNEL_MK_11);
+		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
 		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
 	}
