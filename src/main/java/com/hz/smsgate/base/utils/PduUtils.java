@@ -42,26 +42,6 @@ public class PduUtils {
 
 
 	/**
-	 * 通道555，778的短信去掉前面两个00
-	 *
-	 * @param sm
-	 * @return
-	 */
-	public static SubmitSm removeZero(SubmitSm sm) {
-		if (sm.getSourceAddress().getAddress().equals(StaticValue.CHANNL_REL.get(StaticValue.CHANNEL_1)) || sm.getSourceAddress().getAddress().equals(StaticValue.CHANNEL_1) || StaticValue.CHANNEL_MK_LIST.contains(sm.getSourceAddress().getAddress())) {
-			Address destAddress = sm.getDestAddress();
-			if (destAddress.getAddress().startsWith("00")) {
-				String address = destAddress.getAddress().substring(2);
-				destAddress.setAddress(address);
-				sm.setDestAddress(destAddress);
-				sm.calculateAndSetCommandLength();
-			}
-		}
-		return sm;
-	}
-
-
-	/**
 	 * 获取区号
 	 *
 	 * @param mbl
@@ -82,19 +62,19 @@ public class PduUtils {
 		return areaCode;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	//获取原通道
+	public static String getRealChannel(String systemId, String gwChannel) {
+		if (StringUtils.isBlank(gwChannel)) {
+			return gwChannel;
+		}
+		SessionKey sessionKey = new SessionKey(systemId, gwChannel);
+		for (Map.Entry<String, SessionKey> entry : StaticValue.CHANNL_REL.entrySet()) {
+			if (sessionKey.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return gwChannel;
+	}
 
 	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
 		SmppSession smppSession = null;
@@ -104,6 +84,11 @@ public class PduUtils {
 
 
 		String[] strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, channel));
+		if (strings == null) {
+			String realChannel = getRealChannel(systemId, channel);
+			strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, realChannel));
+		}
+		LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, channel, strings != null ? strings.toString() : null);
 		String pwd = strings[4];
 
 
@@ -121,8 +106,8 @@ public class PduUtils {
 
 		if (smppSession == null) {
 			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), channel, systemId, pwd);
-			return smppSession;
 		}
+
 		return smppSession;
 	}
 

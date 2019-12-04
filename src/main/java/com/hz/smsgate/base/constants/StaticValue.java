@@ -72,6 +72,9 @@ public class StaticValue {
 	public static String SYSTEMID_ALEX = "Alex";
 
 
+	public static String SYSTEMID_SA = "SA015a";
+
+
 	public static String CHANNEL_MK_1 = "778";
 	public static String CHANNEL_MK_2 = "779";
 	public static String CHANNEL_MK_3 = "771";
@@ -94,7 +97,7 @@ public class StaticValue {
 	public static String CHANNEL_YN_1 = "668";
 
 
-
+	public static String CHANNEL_YN_2 = "776";
 
 	public static List<String> CHANNEL_MK_LIST = new ArrayList<>();
 
@@ -172,7 +175,7 @@ public class StaticValue {
 
 		CHANNL_REL.put(CHANNEL_YN_1, new SessionKey(SYSTEMID_ALEX, "Alex"));
 
-
+		CHANNL_REL.put(CHANNEL_YN_2, new SessionKey(SYSTEMID_SA, "0123456789"));
 
 
 		CHANNEL_MK_LIST.add(CHANNEL_MK_1);
