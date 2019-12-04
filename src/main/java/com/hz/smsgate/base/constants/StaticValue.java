@@ -231,6 +231,6 @@ public class StaticValue {
 		CHANNEL_YX_LIST.add(CHANNEL_MK_11);
 		CHANNEL_YX_LIST.add(CHANNL_REL.get(CHANNEL_MK_11).getSenderId());
 
-		CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
+
 	}
 }

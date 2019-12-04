@@ -1,11 +1,14 @@
 package com.hz.smsgate.base.utils;
 
+import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -77,8 +80,10 @@ public class RedisUtil {
 	 */
 	public void removePattern(final String pattern) {
 		Set<Serializable> keys = redisTemplate.keys(pattern);
-		if (keys.size() > 0)
+		if (keys.size() > 0){
 			redisTemplate.delete(keys);
+		}
+
 	}
 
 	/**
@@ -115,13 +120,18 @@ public class RedisUtil {
 		return result;
 	}
 
+
 	/**
-	 * 哈希 添加
+	 * 哈希 添加集合
 	 *
 	 * @param key
-	 * @param hashKey
-	 * @param value
+	 * @param map
 	 */
+	public void hmPutAll(String key, Map<SessionKey,  String[]> map) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		hash.putAll(key, map);
+	}
+
 	public void hmSet(String key, Object hashKey, Object value) {
 		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
 		hash.put(key, hashKey, value);
@@ -149,6 +159,20 @@ public class RedisUtil {
 		return hash.delete(key, hashKey);
 	}
 
+	public Object hmRemoves(String key,  Object... hashKeys) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		return hash.delete(key, hashKeys);
+	}
+
+	public Object hmGetAllValues(String key) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		return hash.values(key);
+	}
+
+	public Object hmGetAllKey(String key) {
+		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
+		return hash.keys(key);
+	}
 
 
 	/**

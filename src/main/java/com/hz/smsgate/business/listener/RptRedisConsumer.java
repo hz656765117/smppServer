@@ -76,9 +76,6 @@ public class RptRedisConsumer implements Runnable {
 	}
 
 
-
-
-
 	public void sendDeliverSm(DeliverSm deliverSm) {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
@@ -120,41 +117,33 @@ public class RptRedisConsumer implements Runnable {
 
 		}
 
-		//key为 msgid + 后缀     value 为 运营商的真实msgid
-		Map<String, String> msgidCache = (Map<String, String>) rptRedisConsumer.redisUtil.hmGetAll(SmppServerConstants.CM_MSGID_CACHE);
 
-		for (Map.Entry<String, String> entry : msgidCache.entrySet()) {
-			//生成的Msgid
-			String msgId = entry.getKey();
 
-			//资源处下行响应时更新的MsgId
-			String address = entry.getValue();
 
+		Object obj = rptRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, messageId);
+		if (obj != null) {
+			String preMsgId = obj.toString();
+			LOGGER.info("状态报告响应systemid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), messageId, preMsgId);
 			try {
-
-				if (address.equals(messageId)) {
-					LOGGER.info("状态报告响应msgid为{}，缓存中key为{}，value为{}", messageId, entry.getKey(), entry.getValue());
-
-					String[] split = msgId.split("-");
-					if (split != null && split.length > 3) {
-						//替换sequenceNumber
-						deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
-					}
-
-					String realMsgid = split[0];
-					//替换messageId
-					deliveryReceipt.setMessageId(realMsgid);
-
-					byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-					deliverSm.setShortMessage(bytes);
-
-					Tlv tlv = getTlv(realMsgid);
-					deliverSm.setOptionalParameter(tlv);
-					deliverSm.calculateAndSetCommandLength();
-
-					removeMap.put(entry.getKey(), entry.getValue());
-					smppSession.sendRequestPdu(deliverSm, 10000, true);
+				String[] split = preMsgId.split("-");
+				if (split != null && split.length > 3) {
+					//替换sequenceNumber
+					deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
 				}
+
+				String realMsgid = split[0];
+				//替换messageId
+				deliveryReceipt.setMessageId(realMsgid);
+
+				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
+				deliverSm.setShortMessage(bytes);
+
+				Tlv tlv = getTlv(realMsgid);
+				deliverSm.setOptionalParameter(tlv);
+				deliverSm.calculateAndSetCommandLength();
+
+				removeMap.put(messageId, preMsgId);
+				smppSession.sendRequestPdu(deliverSm, 10000, true);
 			} catch (Exception e) {
 				LOGGER.error("{}-处理长短信状态报告转发异常", Thread.currentThread().getName(), e);
 			}
@@ -183,6 +172,7 @@ public class RptRedisConsumer implements Runnable {
 
 	/**
 	 * 手动生成tlv   cm - 状态报告使用
+	 *
 	 * @param msgId
 	 * @return
 	 */
@@ -190,8 +180,6 @@ public class RptRedisConsumer implements Runnable {
 		Tlv tlv = new Tlv((short) 30, msgId.getBytes(), "receipted_message_id");
 		return tlv;
 	}
-
-
 
 
 }
