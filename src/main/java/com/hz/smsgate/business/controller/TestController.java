@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.controller;
 
 import com.google.gson.Gson;
+import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.utils.FileUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
@@ -54,7 +55,14 @@ public class TestController {
 
 	@RequestMapping(value = "/mapGet")
 	public void mapGet(){
-		Object map = redisUtil.hmGetAll("map");
+		Object map = redisUtil.hmGetAll(SmppServerConstants.CM_MSGID_CACHE);
+		Map<Object,Object> mm = (Map<Object,Object>)map;
+		System.out.println(map);
+	}
+
+	@RequestMapping(value = "/mapGet1")
+	public void mapGet1(){
+		Object map = redisUtil.hmGetAll("webMsgIdCache");
 		Map<Object,Object> mm = (Map<Object,Object>)map;
 		System.out.println(map);
 	}

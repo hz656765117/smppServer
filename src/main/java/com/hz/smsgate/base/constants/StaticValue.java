@@ -106,10 +106,12 @@ public class StaticValue {
 
 	//越南区号
 	public static String AREA_CODE_VIETNAM = "84";
-
-
-	//越南区号
+	//菲律宾
 	public static String AREA_CODE_PHILIPPINES = "63";
+
+	//印尼
+	public static String AREA_CODE_INDONESIA = "62";
+
 
 	public static Map<String, SessionKey> CHANNL_REL = null;
 

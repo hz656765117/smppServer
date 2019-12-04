@@ -76,6 +76,25 @@ public class PduUtils {
 		return gwChannel;
 	}
 
+
+	public static SessionKey getRealSystemId(String systemId, String senderId) {
+		SessionKey sessionKey = new SessionKey("CM0001", "888");
+		if ("HP01".equals(systemId) && "Haaloo".equals(senderId)) {
+			return sessionKey;
+		} else if ("HP01".equals(systemId) && StaticValue.CHANNEL_MK_10.equals(senderId)) {
+			return sessionKey;
+		} else if ("HP03".equals(systemId) && "Haaloo".equals(senderId)) {
+			return sessionKey;
+		} else if ("HP03".equals(systemId) && StaticValue.CHANNEL_MK_11.equals(senderId)) {
+			return sessionKey;
+		} else if ("SA015a".equals(systemId) && "776".equals(senderId)) {
+			return sessionKey;
+		} else if ("SA015a".equals(systemId) && "0123456789".equals(senderId)) {
+			return sessionKey;
+		}
+		return null;
+	}
+
 	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
 		SmppSession smppSession = null;
 		//根据通道获取session
@@ -83,29 +102,49 @@ public class PduUtils {
 		String systemId = deliverSm.getSystemId();
 
 
-		String[] strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, channel));
-		if (strings == null) {
-			String realChannel = getRealChannel(systemId, channel);
-			strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, realChannel));
+		//有父子关系的，使用父账号
+		SessionKey realSessionKey = getRealSystemId(systemId, channel);
+		if (realSessionKey != null) {
+			smppSession = getServerSmppSession(realSessionKey.getSystemId(), realSessionKey.getSenderId());
 		}
-		LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, channel, strings != null ? strings.toString() : null);
-		String pwd = strings[4];
-
-
-		if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
-			LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(), channel, systemId);
-			return smppSession;
-		}
-
-		for (SmppSession session : DefaultSmppServer.smppSessionList) {
-			if (session.getConfiguration().getSystemId().equals(systemId) && session.getConfiguration().getPassword().equals(pwd)) {
-				smppSession = session;
-				break;
-			}
-		}
-
 		if (smppSession == null) {
-			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), channel, systemId, pwd);
+			smppSession = getServerSmppSession(systemId, channel);
+		}
+
+		return smppSession;
+	}
+
+	public static SmppSession getServerSmppSession(String systemId, String senderId) {
+		SmppSession smppSession = null;
+		String pwd = "";
+		try {
+			String[] strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, senderId));
+			if (strings == null) {
+				String realChannel = getRealChannel(systemId, senderId);
+				strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, realChannel));
+			}
+			LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, senderId, strings != null ? strings.toString() : null);
+
+			pwd = strings[4];
+
+
+			if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
+				LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+				return smppSession;
+			}
+
+			for (SmppSession session : DefaultSmppServer.smppSessionList) {
+				if (session.getConfiguration().getSystemId().equals(systemId) && session.getConfiguration().getPassword().equals(pwd)) {
+					smppSession = session;
+					break;
+				}
+			}
+
+			if (smppSession == null) {
+				LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId, pwd);
+			}
+		} catch (Exception e) {
+			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId, pwd);
 		}
 
 		return smppSession;

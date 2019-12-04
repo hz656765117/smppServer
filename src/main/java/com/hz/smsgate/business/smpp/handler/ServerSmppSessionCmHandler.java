@@ -6,10 +6,13 @@ import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +94,12 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 						submitSm.setSystemId(systemId);
 					}
 
+					//cm特殊处理   一个账号发多个国家
+					if ("CM0001".equals(systemId)) {
+						submitSm = test(submitSm);
+					}
+
+
 					logger.info("当前短信的systemid为:{},msgid为:{},", systemId, msgid);
 					try {
 						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgid);
@@ -121,6 +130,30 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 		} catch (Exception e) {
 			return response;
 		}
+	}
+
+
+	public SubmitSm test(SubmitSm submitSm) {
+		String mbl = submitSm.getDestAddress().getAddress();
+
+		//获取区号
+		String areaCode = PduUtils.getAreaCode(mbl);
+		Address sourceAddress = submitSm.getSourceAddress();
+		if (StaticValue.AREA_CODE_INDONESIA.equals(areaCode)) {
+			submitSm.setSystemId("SA015a");
+			sourceAddress.setAddress("776");
+		} else if (StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
+			sourceAddress.setAddress("Haaloo");
+
+			String sm = new String(submitSm.getShortMessage());
+			if (StringUtils.isNotBlank(sm) && sm.toLowerCase().contains("code")) {
+				submitSm.setSystemId("HP01");
+			}else {
+				submitSm.setSystemId("HP03");
+			}
+		}
+		submitSm.setSourceAddress(sourceAddress);
+		return submitSm;
 	}
 
 
