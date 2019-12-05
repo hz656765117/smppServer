@@ -10,6 +10,8 @@
     <result column="s_pwd" jdbcType="VARCHAR" property="smppPwd" />
     <result column="systemId" jdbcType="VARCHAR" property="systemid" />
     <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+    <result column="msg_type" jdbcType="INTEGER" property="msgType" />
     <result column="sys_channel_id" jdbcType="VARCHAR" property="sysChannelId" />
     <result column="flag" jdbcType="INTEGER" property="flag" />
     <result column="user_ids" jdbcType="VARCHAR" property="userIds" />
@@ -30,7 +32,10 @@
           su.sp_pwd,
           su.systemId  s_user,
           su.password  s_pwd,
+          su.area_code,
+          su.msg_type,
           su.user_ids,
+          su.desc,
           op.systemid,
           ch.senderid,
           ch.channel

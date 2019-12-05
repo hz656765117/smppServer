@@ -12,6 +12,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 /**
  * @Auther: huangzhuo
@@ -87,20 +89,13 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 					String msgid = SmppUtils.getMsgId();
 					submitSm.setTempMsgId(msgid);
 
-					String systemId = "";
+
 					SmppSession session = this.sessionRef.get();
-					if (session != null) {
-						systemId = session.getConfiguration().getSystemId();
-						submitSm.setSystemId(systemId);
-					}
-
-					//cm特殊处理   一个账号发多个国家
-					if ("CM0001".equals(systemId)) {
-						submitSm = test(submitSm);
-					}
 
 
-					logger.info("当前短信的systemid为:{},msgid为:{},", systemId, msgid);
+					//一个账号发多个国家
+					submitSm = getRealSubmitSm(submitSm, session);
+
 					try {
 						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgid);
 						putSelfQueue(submitSm);
@@ -132,28 +127,87 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 		}
 	}
 
+	/**
+	 * 父账号，替换真实的systemId和senderId
+	 *
+	 * @param submitSm 下行对象
+	 * @return 下行对象
+	 */
+	public SubmitSm getRealSubmitSm(SubmitSm submitSm, SmppSession session) {
+		if (session == null) {
+			return submitSm;
+		}
 
-	public SubmitSm test(SubmitSm submitSm) {
-		String mbl = submitSm.getDestAddress().getAddress();
+		try {
+			SmppUserVo smppUserFather = getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+			//如果不是父账号，不做处理
+			if (smppUserFather == null) {
+				//如果查不到账号，则拿绑定的账号当做systemId
+				submitSm.setSystemId(session.getConfiguration().getSystemId());
+				return submitSm;
+			}
 
-		//获取区号
-		String areaCode = PduUtils.getAreaCode(mbl);
-		Address sourceAddress = submitSm.getSourceAddress();
-		if (StaticValue.AREA_CODE_INDONESIA.equals(areaCode)) {
-			submitSm.setSystemId("SA015a");
-			sourceAddress.setAddress("776");
-		} else if (StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
-			sourceAddress.setAddress("Haaloo");
+			Address sourceAddress = submitSm.getSourceAddress();
+
+			List<SmppUserVo> list = smppUserFather.getList();
+			if (list == null || list.size() <= 0) {
+				submitSm.setSystemId(smppUserFather.getSystemid());
+				sourceAddress.setAddress(smppUserFather.getSenderid());
+				submitSm.setSourceAddress(sourceAddress);
+				return submitSm;
+			}
+
+			String mbl = submitSm.getDestAddress().getAddress();
+			//获取区号
+			String areaCode = PduUtils.getAreaCode(mbl);
 
 			String sm = new String(submitSm.getShortMessage());
+
+			//短信类型 0 opt  1 营销
+			Integer msgType = 1;
 			if (StringUtils.isNotBlank(sm) && sm.toLowerCase().contains("code")) {
-				submitSm.setSystemId("HP01");
-			}else {
-				submitSm.setSystemId("HP03");
+				msgType = 0;
 			}
+
+			String systemId = null;
+			String senderId = null;
+			for (SmppUserVo smppUser : list) {
+				if (areaCode.equals(smppUser.getAreaCode()) && msgType.equals(smppUser.getMsgType())) {
+					systemId = smppUser.getSystemid();
+					senderId = smppUser.getSenderid();
+					break;
+				}
+			}
+
+
+			if (StringUtils.isNotBlank(systemId) && StringUtils.isNotBlank(senderId)) {
+				logger.info("systemId({}),senderId({})  获取真实systemId({})和senderId({})成功------------- ", submitSm.getSystemId(), sourceAddress.getAddress(), systemId, senderId);
+				submitSm.setSystemId(systemId);
+				sourceAddress.setAddress(senderId);
+				submitSm.setSourceAddress(sourceAddress);
+
+			} else {
+				logger.error("systemId({}),senderId({})  获取真实systemId和senderId 失败------------- ", submitSm.getSystemId(), sourceAddress.getAddress());
+			}
+		} catch (Exception e) {
+			logger.error("systemId({}),senderId({})  获取真实systemId和senderId 异常------------- ", submitSm.getSystemId(), submitSm.getSourceAddress().getAddress(), e);
 		}
-		submitSm.setSourceAddress(sourceAddress);
+
 		return submitSm;
+	}
+
+	public static SmppUserVo getSmppUserByUserPwd(String smppUser, String smppPwd) {
+		if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
+			return null;
+		}
+
+		for (SmppUserVo smppUserVo : StaticValue.SMPP_USER) {
+			if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd())) {
+				return smppUserVo;
+			}
+
+		}
+		return null;
 	}
 
 

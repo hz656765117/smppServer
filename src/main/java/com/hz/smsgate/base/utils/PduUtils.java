@@ -103,20 +103,12 @@ public class PduUtils {
 		String channel = deliverSm.getDestAddress().getAddress();
 		String systemId = deliverSm.getSystemId();
 
-
-		//有父子关系的，使用父账号
-		SessionKey realSessionKey = getRealSystemId(systemId, channel);
-		if (realSessionKey != null) {
-			smppSession = getServerSmppSession(realSessionKey.getSystemId(), realSessionKey.getSenderId());
-		}
-		if (smppSession == null) {
-			smppSession = getServerSmppSession(systemId, channel);
-		}
+		smppSession = getServerSmppSession(systemId, channel);
 
 		return smppSession;
 	}
 
-	public static SmppUserVo getSmppUser(String curSystemId, String curSenderId) {
+	public static SmppUserVo getSmppUserFather(String curSystemId, String curSenderId) {
 		if (StringUtils.isBlank(curSystemId) || StringUtils.isBlank(curSenderId)) {
 			return null;
 		}
@@ -124,22 +116,26 @@ public class PduUtils {
 
 		List<SmppUserVo> list;
 
-		//先查父账号
 		for (SmppUserVo smppUser : StaticValue.SMPP_USER) {
 			list = smppUser.getList();
 			if (list == null || list.size() <= 0) {
 				continue;
 			}
-
 			for (SmppUserVo sonSmppUser : list) {
 				if (checkSmppUser(sonSmppUser, curSystemId, curSenderId)) {
 					return smppUser;
 				}
 			}
+		}
+		return smppUserVo;
+	}
 
+
+	public static SmppUserVo getSmppUserSon(String curSystemId, String curSenderId) {
+		if (StringUtils.isBlank(curSystemId) || StringUtils.isBlank(curSenderId)) {
+			return null;
 		}
 
-		//再查子账号
 		for (SmppUserVo smppUser : StaticValue.SMPP_USER) {
 			boolean flag = checkSmppUser(smppUser, curSystemId, curSenderId);
 			if (flag) {
@@ -147,9 +143,45 @@ public class PduUtils {
 			}
 		}
 
+		return null;
+	}
+
+
+
+
+
+	public static SmppUserVo getSmppUserFatherBefore(String curSystemId, String curSenderId) {
+		if (StringUtils.isBlank(curSystemId) || StringUtils.isBlank(curSenderId)) {
+			return null;
+		}
+		SmppUserVo smppUserVo;
+
+		smppUserVo = getSmppUserFather(curSystemId, curSenderId);
+
+		//再查子账号
+		if (smppUserVo == null) {
+			smppUserVo = getSmppUserSon(curSystemId, curSenderId);
+		}
+
 
 		return smppUserVo;
 	}
+
+
+	public static SmppUserVo getSmppUserSonBefore(String curSystemId, String curSenderId) {
+		if (StringUtils.isBlank(curSystemId) || StringUtils.isBlank(curSenderId)) {
+			return null;
+		}
+		SmppUserVo smppUserVo;
+
+		smppUserVo = getSmppUserSon(curSystemId, curSenderId);
+		if (smppUserVo == null) {
+			smppUserVo = getSmppUserFather(curSystemId, curSenderId);
+		}
+
+		return smppUserVo;
+	}
+
 
 	public static boolean checkSmppUser(SmppUserVo smppUser, String curSystemId, String curSenderId) {
 		boolean flag = false;
@@ -171,7 +203,7 @@ public class PduUtils {
 	public static SmppSession getServerSmppSession(String systemId, String senderId) {
 		SmppSession smppSession = null;
 		try {
-			SmppUserVo smppUserVo = getSmppUser(systemId, senderId);
+			SmppUserVo smppUserVo = getSmppUserFatherBefore(systemId, senderId);
 			LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, senderId, smppUserVo != null ? smppUserVo.toString() : null);
 
 
@@ -180,11 +212,10 @@ public class PduUtils {
 				return smppSession;
 			}
 
-			for (SmppSession session : DefaultSmppServer.smppSessionList) {
-				if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd())) {
-					smppSession = session;
-					break;
-				}
+			smppSession = getSmppSessionBySmppUser(smppUserVo);
+			if (smppSession == null) {
+				smppUserVo = getSmppUserSonBefore(systemId, senderId);
+				smppSession = getSmppSessionBySmppUser(smppUserVo);
 			}
 
 			if (smppSession == null) {
@@ -196,5 +227,21 @@ public class PduUtils {
 
 		return smppSession;
 	}
+
+
+	public static SmppSession getSmppSessionBySmppUser(SmppUserVo smppUserVo) {
+		if (smppUserVo == null) {
+			return null;
+		}
+		SmppSession smppSession = null;
+		for (SmppSession session : DefaultSmppServer.smppSessionList) {
+			if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd())) {
+				smppSession = session;
+				break;
+			}
+		}
+		return smppSession;
+	}
+
 
 }

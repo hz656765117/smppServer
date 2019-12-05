@@ -58,7 +58,16 @@ public class SmppUserVo implements Serializable {
      */
     private String senderid;
 
+    /**
+     * 区号
+     */
+    private String areaCode;
 
+
+    /**
+     * 短信类型 0 opt短信  1 营销短信
+     */
+    private Integer msgType;
 
     /**
      * VARCHAR(255) 必填<br>
@@ -320,5 +329,23 @@ public class SmppUserVo implements Serializable {
 
     public void setList(List<SmppUserVo> list) {
         this.list = list;
+    }
+
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
+
+
+    public Integer getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(Integer msgType) {
+        this.msgType = msgType;
     }
 }

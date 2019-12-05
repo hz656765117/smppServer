@@ -52,6 +52,9 @@ public class SmppServiceImpl implements SmppService {
 				if (StringUtils.isNotBlank(userIds)) {
 					List<Integer> listIds = Arrays.asList(userIds.split(",")).stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
 					list = smppMapper.selectUser(listIds);
+					smppUserVo.setSenderid(smppUserVo.getDesc());
+					smppUserVo.setChannel(smppUserVo.getDesc());
+					smppUserVo.setSystemid(smppUserVo.getSmppUser());
 					smppUserVo.setList(list);
 				}
 			}
