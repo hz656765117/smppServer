@@ -4,7 +4,9 @@ import com.hz.smsgate.business.pojo.SmppUser;
 import com.hz.smsgate.business.pojo.SmppUserExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SmppUserMapper {
     long countByExample(SmppUserExample example);
 

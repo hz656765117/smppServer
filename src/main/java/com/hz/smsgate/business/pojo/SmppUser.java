@@ -13,16 +13,28 @@ public class SmppUser implements Serializable {
     private Integer id;
 
     /**
-     * VARCHAR(255)<br>
+     * VARCHAR(255) 必填<br>
      * sp账号
      */
     private String spUser;
 
     /**
-     * VARCHAR(255)<br>
+     * VARCHAR(255) 必填<br>
      * sp密码
      */
     private String spPwd;
+
+    /**
+     * VARCHAR(255)<br>
+     * 提供出去的账号
+     */
+    private String systemid;
+
+    /**
+     * VARCHAR(255) 必填<br>
+     * 提供出去的密码
+     */
+    private String password;
 
     /**
      * VARCHAR(255)<br>
@@ -31,10 +43,10 @@ public class SmppUser implements Serializable {
     private String sysChannelId;
 
     /**
-     * VARCHAR(255)<br>
-     * 提供出去的ip
+     * INTEGER(10)<br>
+     * 
      */
-    private String password;
+    private Integer flag;
 
     /**
      * VARCHAR(255)<br>
@@ -44,7 +56,7 @@ public class SmppUser implements Serializable {
 
     /**
      * VARCHAR(255)<br>
-     * 创建时间
+     * 描述
      */
     private String desc;
 
@@ -77,7 +89,7 @@ public class SmppUser implements Serializable {
     }
 
     /**
-     * VARCHAR(255)<br>
+     * VARCHAR(255) 必填<br>
      * 获得 sp账号
      */
     public String getSpUser() {
@@ -85,7 +97,7 @@ public class SmppUser implements Serializable {
     }
 
     /**
-     * VARCHAR(255)<br>
+     * VARCHAR(255) 必填<br>
      * 设置 sp账号
      */
     public void setSpUser(String spUser) {
@@ -93,7 +105,7 @@ public class SmppUser implements Serializable {
     }
 
     /**
-     * VARCHAR(255)<br>
+     * VARCHAR(255) 必填<br>
      * 获得 sp密码
      */
     public String getSpPwd() {
@@ -101,11 +113,43 @@ public class SmppUser implements Serializable {
     }
 
     /**
-     * VARCHAR(255)<br>
+     * VARCHAR(255) 必填<br>
      * 设置 sp密码
      */
     public void setSpPwd(String spPwd) {
         this.spPwd = spPwd == null ? null : spPwd.trim();
+    }
+
+    /**
+     * VARCHAR(255)<br>
+     * 获得 提供出去的账号
+     */
+    public String getSystemid() {
+        return systemid;
+    }
+
+    /**
+     * VARCHAR(255)<br>
+     * 设置 提供出去的账号
+     */
+    public void setSystemid(String systemid) {
+        this.systemid = systemid == null ? null : systemid.trim();
+    }
+
+    /**
+     * VARCHAR(255) 必填<br>
+     * 获得 提供出去的密码
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * VARCHAR(255) 必填<br>
+     * 设置 提供出去的密码
+     */
+    public void setPassword(String password) {
+        this.password = password == null ? null : password.trim();
     }
 
     /**
@@ -125,19 +169,19 @@ public class SmppUser implements Serializable {
     }
 
     /**
-     * VARCHAR(255)<br>
-     * 获得 提供出去的ip
+     * INTEGER(10)<br>
+     * 获得 
      */
-    public String getPassword() {
-        return password;
+    public Integer getFlag() {
+        return flag;
     }
 
     /**
-     * VARCHAR(255)<br>
-     * 设置 提供出去的ip
+     * INTEGER(10)<br>
+     * 设置 
      */
-    public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+    public void setFlag(Integer flag) {
+        this.flag = flag;
     }
 
     /**
@@ -158,7 +202,7 @@ public class SmppUser implements Serializable {
 
     /**
      * VARCHAR(255)<br>
-     * 获得 创建时间
+     * 获得 描述
      */
     public String getDesc() {
         return desc;
@@ -166,7 +210,7 @@ public class SmppUser implements Serializable {
 
     /**
      * VARCHAR(255)<br>
-     * 设置 创建时间
+     * 设置 描述
      */
     public void setDesc(String desc) {
         this.desc = desc == null ? null : desc.trim();
@@ -213,8 +257,10 @@ public class SmppUser implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", spUser=").append(spUser);
         sb.append(", spPwd=").append(spPwd);
-        sb.append(", sysChannelId=").append(sysChannelId);
+        sb.append(", systemid=").append(systemid);
         sb.append(", password=").append(password);
+        sb.append(", sysChannelId=").append(sysChannelId);
+        sb.append(", flag=").append(flag);
         sb.append(", userIds=").append(userIds);
         sb.append(", desc=").append(desc);
         sb.append(", createTime=").append(createTime);
@@ -238,8 +284,10 @@ public class SmppUser implements Serializable {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getSpUser() == null ? other.getSpUser() == null : this.getSpUser().equals(other.getSpUser()))
             && (this.getSpPwd() == null ? other.getSpPwd() == null : this.getSpPwd().equals(other.getSpPwd()))
-            && (this.getSysChannelId() == null ? other.getSysChannelId() == null : this.getSysChannelId().equals(other.getSysChannelId()))
+            && (this.getSystemid() == null ? other.getSystemid() == null : this.getSystemid().equals(other.getSystemid()))
             && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
+            && (this.getSysChannelId() == null ? other.getSysChannelId() == null : this.getSysChannelId().equals(other.getSysChannelId()))
+            && (this.getFlag() == null ? other.getFlag() == null : this.getFlag().equals(other.getFlag()))
             && (this.getUserIds() == null ? other.getUserIds() == null : this.getUserIds().equals(other.getUserIds()))
             && (this.getDesc() == null ? other.getDesc() == null : this.getDesc().equals(other.getDesc()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
@@ -253,8 +301,10 @@ public class SmppUser implements Serializable {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getSpUser() == null) ? 0 : getSpUser().hashCode());
         result = prime * result + ((getSpPwd() == null) ? 0 : getSpPwd().hashCode());
-        result = prime * result + ((getSysChannelId() == null) ? 0 : getSysChannelId().hashCode());
+        result = prime * result + ((getSystemid() == null) ? 0 : getSystemid().hashCode());
         result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
+        result = prime * result + ((getSysChannelId() == null) ? 0 : getSysChannelId().hashCode());
+        result = prime * result + ((getFlag() == null) ? 0 : getFlag().hashCode());
         result = prime * result + ((getUserIds() == null) ? 0 : getUserIds().hashCode());
         result = prime * result + ((getDesc() == null) ? 0 : getDesc().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());

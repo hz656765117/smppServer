@@ -305,73 +305,73 @@ public class SmppUserExample {
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdIsNull() {
-            addCriterion("sys_channel_id is null");
+        public Criteria andSystemidIsNull() {
+            addCriterion("systemId is null");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdIsNotNull() {
-            addCriterion("sys_channel_id is not null");
+        public Criteria andSystemidIsNotNull() {
+            addCriterion("systemId is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdEqualTo(String value) {
-            addCriterion("sys_channel_id =", value, "sysChannelId");
+        public Criteria andSystemidEqualTo(String value) {
+            addCriterion("systemId =", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdNotEqualTo(String value) {
-            addCriterion("sys_channel_id <>", value, "sysChannelId");
+        public Criteria andSystemidNotEqualTo(String value) {
+            addCriterion("systemId <>", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdGreaterThan(String value) {
-            addCriterion("sys_channel_id >", value, "sysChannelId");
+        public Criteria andSystemidGreaterThan(String value) {
+            addCriterion("systemId >", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdGreaterThanOrEqualTo(String value) {
-            addCriterion("sys_channel_id >=", value, "sysChannelId");
+        public Criteria andSystemidGreaterThanOrEqualTo(String value) {
+            addCriterion("systemId >=", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdLessThan(String value) {
-            addCriterion("sys_channel_id <", value, "sysChannelId");
+        public Criteria andSystemidLessThan(String value) {
+            addCriterion("systemId <", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdLessThanOrEqualTo(String value) {
-            addCriterion("sys_channel_id <=", value, "sysChannelId");
+        public Criteria andSystemidLessThanOrEqualTo(String value) {
+            addCriterion("systemId <=", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdLike(String value) {
-            addCriterion("sys_channel_id like", value, "sysChannelId");
+        public Criteria andSystemidLike(String value) {
+            addCriterion("systemId like", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdNotLike(String value) {
-            addCriterion("sys_channel_id not like", value, "sysChannelId");
+        public Criteria andSystemidNotLike(String value) {
+            addCriterion("systemId not like", value, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdIn(List<String> values) {
-            addCriterion("sys_channel_id in", values, "sysChannelId");
+        public Criteria andSystemidIn(List<String> values) {
+            addCriterion("systemId in", values, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdNotIn(List<String> values) {
-            addCriterion("sys_channel_id not in", values, "sysChannelId");
+        public Criteria andSystemidNotIn(List<String> values) {
+            addCriterion("systemId not in", values, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdBetween(String value1, String value2) {
-            addCriterion("sys_channel_id between", value1, value2, "sysChannelId");
+        public Criteria andSystemidBetween(String value1, String value2) {
+            addCriterion("systemId between", value1, value2, "systemid");
             return (Criteria) this;
         }
 
-        public Criteria andSysChannelIdNotBetween(String value1, String value2) {
-            addCriterion("sys_channel_id not between", value1, value2, "sysChannelId");
+        public Criteria andSystemidNotBetween(String value1, String value2) {
+            addCriterion("systemId not between", value1, value2, "systemid");
             return (Criteria) this;
         }
 
@@ -442,6 +442,136 @@ public class SmppUserExample {
 
         public Criteria andPasswordNotBetween(String value1, String value2) {
             addCriterion("password not between", value1, value2, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdIsNull() {
+            addCriterion("sys_channel_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdIsNotNull() {
+            addCriterion("sys_channel_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdEqualTo(String value) {
+            addCriterion("sys_channel_id =", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdNotEqualTo(String value) {
+            addCriterion("sys_channel_id <>", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdGreaterThan(String value) {
+            addCriterion("sys_channel_id >", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdGreaterThanOrEqualTo(String value) {
+            addCriterion("sys_channel_id >=", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdLessThan(String value) {
+            addCriterion("sys_channel_id <", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdLessThanOrEqualTo(String value) {
+            addCriterion("sys_channel_id <=", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdLike(String value) {
+            addCriterion("sys_channel_id like", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdNotLike(String value) {
+            addCriterion("sys_channel_id not like", value, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdIn(List<String> values) {
+            addCriterion("sys_channel_id in", values, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdNotIn(List<String> values) {
+            addCriterion("sys_channel_id not in", values, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdBetween(String value1, String value2) {
+            addCriterion("sys_channel_id between", value1, value2, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSysChannelIdNotBetween(String value1, String value2) {
+            addCriterion("sys_channel_id not between", value1, value2, "sysChannelId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNull() {
+            addCriterion("flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNotNull() {
+            addCriterion("flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagEqualTo(Integer value) {
+            addCriterion("flag =", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotEqualTo(Integer value) {
+            addCriterion("flag <>", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThan(Integer value) {
+            addCriterion("flag >", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThanOrEqualTo(Integer value) {
+            addCriterion("flag >=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThan(Integer value) {
+            addCriterion("flag <", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThanOrEqualTo(Integer value) {
+            addCriterion("flag <=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIn(List<Integer> values) {
+            addCriterion("flag in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotIn(List<Integer> values) {
+            addCriterion("flag not in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagBetween(Integer value1, Integer value2) {
+            addCriterion("flag between", value1, value2, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotBetween(Integer value1, Integer value2) {
+            addCriterion("flag not between", value1, value2, "flag");
             return (Criteria) this;
         }
 

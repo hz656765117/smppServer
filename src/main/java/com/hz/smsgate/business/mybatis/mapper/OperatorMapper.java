@@ -1,10 +1,14 @@
 package com.hz.smsgate.business.mybatis.mapper;
 
+
+import java.util.List;
+
 import com.hz.smsgate.business.pojo.Operator;
 import com.hz.smsgate.business.pojo.OperatorExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface OperatorMapper {
     long countByExample(OperatorExample example);
 

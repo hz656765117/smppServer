@@ -4,6 +4,8 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.utils.*;
+import com.hz.smsgate.business.pojo.Channel;
+import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.CmSmppServerHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -36,6 +39,10 @@ public class SmppServerInit {
 	public static SmppServerInit smppServerInit;
 
 
+	@Autowired
+	private SmppService smppService;
+
+
 	@PostConstruct
 	public void postConstruct() throws Exception {
 		smppServerInit = this;
@@ -47,6 +54,10 @@ public class SmppServerInit {
 		initSmppServer();
 
 		initConfigs();
+
+
+		List<Channel> allChannels = smppService.getAllChannels();
+
 
 		//启动相关线程
 		initMutiThread();

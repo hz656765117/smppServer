@@ -4,7 +4,9 @@ import com.hz.smsgate.business.pojo.SysChanelRef;
 import com.hz.smsgate.business.pojo.SysChanelRefExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SysChanelRefMapper {
     long countByExample(SysChanelRefExample example);
 

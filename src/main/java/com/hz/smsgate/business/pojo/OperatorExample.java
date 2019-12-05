@@ -235,136 +235,6 @@ public class OperatorExample {
             return (Criteria) this;
         }
 
-        public Criteria andSystemidIsNull() {
-            addCriterion("systemid is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidIsNotNull() {
-            addCriterion("systemid is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidEqualTo(Integer value) {
-            addCriterion("systemid =", value, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidNotEqualTo(Integer value) {
-            addCriterion("systemid <>", value, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidGreaterThan(Integer value) {
-            addCriterion("systemid >", value, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidGreaterThanOrEqualTo(Integer value) {
-            addCriterion("systemid >=", value, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidLessThan(Integer value) {
-            addCriterion("systemid <", value, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidLessThanOrEqualTo(Integer value) {
-            addCriterion("systemid <=", value, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidIn(List<Integer> values) {
-            addCriterion("systemid in", values, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidNotIn(List<Integer> values) {
-            addCriterion("systemid not in", values, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidBetween(Integer value1, Integer value2) {
-            addCriterion("systemid between", value1, value2, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andSystemidNotBetween(Integer value1, Integer value2) {
-            addCriterion("systemid not between", value1, value2, "systemid");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordIsNull() {
-            addCriterion("password is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordIsNotNull() {
-            addCriterion("password is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordEqualTo(String value) {
-            addCriterion("password =", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordNotEqualTo(String value) {
-            addCriterion("password <>", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordGreaterThan(String value) {
-            addCriterion("password >", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordGreaterThanOrEqualTo(String value) {
-            addCriterion("password >=", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordLessThan(String value) {
-            addCriterion("password <", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordLessThanOrEqualTo(String value) {
-            addCriterion("password <=", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordLike(String value) {
-            addCriterion("password like", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordNotLike(String value) {
-            addCriterion("password not like", value, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordIn(List<String> values) {
-            addCriterion("password in", values, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordNotIn(List<String> values) {
-            addCriterion("password not in", values, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordBetween(String value1, String value2) {
-            addCriterion("password between", value1, value2, "password");
-            return (Criteria) this;
-        }
-
-        public Criteria andPasswordNotBetween(String value1, String value2) {
-            addCriterion("password not between", value1, value2, "password");
-            return (Criteria) this;
-        }
-
         public Criteria andIpIsNull() {
             addCriterion("ip is null");
             return (Criteria) this;
@@ -502,6 +372,206 @@ public class OperatorExample {
 
         public Criteria andPortNotBetween(String value1, String value2) {
             addCriterion("port not between", value1, value2, "port");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidIsNull() {
+            addCriterion("systemid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidIsNotNull() {
+            addCriterion("systemid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidEqualTo(String value) {
+            addCriterion("systemid =", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidNotEqualTo(String value) {
+            addCriterion("systemid <>", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidGreaterThan(String value) {
+            addCriterion("systemid >", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidGreaterThanOrEqualTo(String value) {
+            addCriterion("systemid >=", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidLessThan(String value) {
+            addCriterion("systemid <", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidLessThanOrEqualTo(String value) {
+            addCriterion("systemid <=", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidLike(String value) {
+            addCriterion("systemid like", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidNotLike(String value) {
+            addCriterion("systemid not like", value, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidIn(List<String> values) {
+            addCriterion("systemid in", values, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidNotIn(List<String> values) {
+            addCriterion("systemid not in", values, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidBetween(String value1, String value2) {
+            addCriterion("systemid between", value1, value2, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSystemidNotBetween(String value1, String value2) {
+            addCriterion("systemid not between", value1, value2, "systemid");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordIsNull() {
+            addCriterion("password is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordIsNotNull() {
+            addCriterion("password is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordEqualTo(String value) {
+            addCriterion("password =", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordNotEqualTo(String value) {
+            addCriterion("password <>", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordGreaterThan(String value) {
+            addCriterion("password >", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordGreaterThanOrEqualTo(String value) {
+            addCriterion("password >=", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordLessThan(String value) {
+            addCriterion("password <", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordLessThanOrEqualTo(String value) {
+            addCriterion("password <=", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordLike(String value) {
+            addCriterion("password like", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordNotLike(String value) {
+            addCriterion("password not like", value, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordIn(List<String> values) {
+            addCriterion("password in", values, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordNotIn(List<String> values) {
+            addCriterion("password not in", values, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordBetween(String value1, String value2) {
+            addCriterion("password between", value1, value2, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andPasswordNotBetween(String value1, String value2) {
+            addCriterion("password not between", value1, value2, "password");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNull() {
+            addCriterion("flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIsNotNull() {
+            addCriterion("flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagEqualTo(Integer value) {
+            addCriterion("flag =", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotEqualTo(Integer value) {
+            addCriterion("flag <>", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThan(Integer value) {
+            addCriterion("flag >", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagGreaterThanOrEqualTo(Integer value) {
+            addCriterion("flag >=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThan(Integer value) {
+            addCriterion("flag <", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagLessThanOrEqualTo(Integer value) {
+            addCriterion("flag <=", value, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagIn(List<Integer> values) {
+            addCriterion("flag in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotIn(List<Integer> values) {
+            addCriterion("flag not in", values, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagBetween(Integer value1, Integer value2) {
+            addCriterion("flag between", value1, value2, "flag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlagNotBetween(Integer value1, Integer value2) {
+            addCriterion("flag not between", value1, value2, "flag");
             return (Criteria) this;
         }
 
