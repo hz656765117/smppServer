@@ -22,7 +22,7 @@ public class MybatisScanConfiguration {
         public MapperScannerConfigurer mapperScannerConfigurer() {
             MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
             mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-            mapperScannerConfigurer.setBasePackage("com.hz.springboot.business.mybatis.*");
+            mapperScannerConfigurer.setBasePackage("com.hz.smsgate.business.mybatis.*");
             return mapperScannerConfigurer;
         }
 
