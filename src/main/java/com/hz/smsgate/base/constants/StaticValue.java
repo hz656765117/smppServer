@@ -4,6 +4,7 @@ package com.hz.smsgate.base.constants;
 import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.utils.FileUtils;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -115,7 +116,9 @@ public class StaticValue {
 
 	public static Map<String, SessionKey> CHANNL_REL = null;
 
-	public static Map<SessionKey,  String[]> CHANNL_SP_REL = null;
+
+	public static List<SmppUserVo> SMPP_USER = null;
+
 
 
 	public static String WEB_GATE = "";

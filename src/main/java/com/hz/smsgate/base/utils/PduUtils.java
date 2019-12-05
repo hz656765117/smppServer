@@ -9,6 +9,7 @@ import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.business.listener.RptRedisConsumer;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -114,18 +116,63 @@ public class PduUtils {
 		return smppSession;
 	}
 
+	public static SmppUserVo getSmppUser(String curSystemId, String curSenderId) {
+		if (StringUtils.isBlank(curSystemId) || StringUtils.isBlank(curSenderId)) {
+			return null;
+		}
+		SmppUserVo smppUserVo = null;
+
+		List<SmppUserVo> list;
+
+		//先查父账号
+		for (SmppUserVo smppUser : StaticValue.SMPP_USER) {
+			list = smppUser.getList();
+			if (list == null || list.size() <= 0) {
+				continue;
+			}
+
+			for (SmppUserVo sonSmppUser : list) {
+				if (checkSmppUser(sonSmppUser, curSystemId, curSenderId)) {
+					return smppUser;
+				}
+			}
+
+		}
+
+		//再查子账号
+		for (SmppUserVo smppUser : StaticValue.SMPP_USER) {
+			boolean flag = checkSmppUser(smppUser, curSystemId, curSenderId);
+			if (flag) {
+				return smppUser;
+			}
+		}
+
+
+		return smppUserVo;
+	}
+
+	public static boolean checkSmppUser(SmppUserVo smppUser, String curSystemId, String curSenderId) {
+		boolean flag = false;
+		String systemid = smppUser.getSystemid();
+		String senderid = smppUser.getSenderid();
+		String channel = smppUser.getChannel();
+		if (curSystemId.equals(systemid) && curSenderId.equals(senderid)) {
+			flag = true;
+		}
+
+		if (curSystemId.equals(systemid) && curSenderId.equals(channel)) {
+			flag = true;
+		}
+
+		return flag;
+	}
+
+
 	public static SmppSession getServerSmppSession(String systemId, String senderId) {
 		SmppSession smppSession = null;
-		String pwd = "";
 		try {
-			String[] strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, senderId));
-			if (strings == null) {
-				String realChannel = getRealChannel(systemId, senderId);
-				strings = StaticValue.CHANNL_SP_REL.get(new SessionKey(systemId, realChannel));
-			}
-			LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, senderId, strings != null ? strings.toString() : null);
-
-			pwd = strings[4];
+			SmppUserVo smppUserVo = getSmppUser(systemId, senderId);
+			LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, senderId, smppUserVo != null ? smppUserVo.toString() : null);
 
 
 			if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
@@ -134,17 +181,17 @@ public class PduUtils {
 			}
 
 			for (SmppSession session : DefaultSmppServer.smppSessionList) {
-				if (session.getConfiguration().getSystemId().equals(systemId) && session.getConfiguration().getPassword().equals(pwd)) {
+				if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd())) {
 					smppSession = session;
 					break;
 				}
 			}
 
 			if (smppSession == null) {
-				LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId, pwd);
+				LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId);
 			}
 		} catch (Exception e) {
-			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId, pwd);
+			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId);
 		}
 
 		return smppSession;

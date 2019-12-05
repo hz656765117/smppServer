@@ -2,6 +2,7 @@ package com.hz.smsgate.base.utils;
 
 import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
@@ -127,7 +128,7 @@ public class RedisUtil {
 	 * @param key
 	 * @param map
 	 */
-	public void hmPutAll(String key, Map<SessionKey,  String[]> map) {
+	public void hmPutAll(String key, Map<SessionKey, SmppUserVo> map) {
 		HashOperations<String, Object, Object> hash = redisTemplate.opsForHash();
 		hash.putAll(key, map);
 	}

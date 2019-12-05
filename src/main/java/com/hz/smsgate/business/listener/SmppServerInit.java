@@ -5,6 +5,7 @@ import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.utils.*;
 import com.hz.smsgate.business.pojo.Channel;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
 import com.hz.smsgate.business.smpp.handler.CmSmppServerHandler;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
@@ -49,15 +50,8 @@ public class SmppServerInit {
 		smppServerInit.redisUtil = this.redisUtil;
 
 		initSystemGlobals();
-
-
 		initSmppServer();
-
 		initConfigs();
-
-
-		List<Channel> allChannels = smppService.getAllChannels();
-
 
 		//启动相关线程
 		initMutiThread();
@@ -83,24 +77,8 @@ public class SmppServerInit {
 	}
 
 
-	public static void initConfigs() {
-		try {
-			//移除原有的配置
-			LinkedHashSet keys = (LinkedHashSet) smppServerInit.redisUtil.hmGetAllKey("spConfigMap");
-			if (keys != null && keys.size() > 0) {
-				Object[] objects = keys.toArray();
-				smppServerInit.redisUtil.hmRemoves("spConfigMap", objects);
-			}
-		} catch (Exception e) {
-			logger.error("初始化通道配置异常", e);
-		}
-
-		StaticValue.CHANNL_SP_REL = FileUtils.getSpConfigs(StaticValue.SP_RESOURCE_HOME);
-
-		//新增配置
-		smppServerInit.redisUtil.hmPutAll("spConfigMap", StaticValue.CHANNL_SP_REL);
-
-
+	public void initConfigs() {
+		StaticValue.SMPP_USER = smppService.getAllSmppUser();
 	}
 
 	/**

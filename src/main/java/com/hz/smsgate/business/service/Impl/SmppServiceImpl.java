@@ -1,38 +1,66 @@
 package com.hz.smsgate.business.service.Impl;
 
 
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.business.mybatis.mapper.ChannelMapper;
 
+import com.hz.smsgate.business.mybatis.mapper.SmppMapper;
 import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.ChannelExample;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
 public class SmppServiceImpl implements SmppService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SmppServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(SmppServiceImpl.class);
 
 
-    @Autowired
-    private ChannelMapper channelMapper;
-
-    @Override
-    public List<Channel> getAllChannels() {
-        ChannelExample example = new ChannelExample();
-        example.createCriteria().andSenderidIsNotNull();
-        List<Channel> channels = channelMapper.selectByExample(example);
-        return channels;
-    }
+	@Autowired
+	private ChannelMapper channelMapper;
+	@Autowired
+	private SmppMapper smppMapper;
 
 
-//
+	@Override
+	public List<Channel> getAllChannels() {
+		ChannelExample example = new ChannelExample();
+		example.createCriteria().andSenderidIsNotNull();
+		List<Channel> channels = channelMapper.selectByExample(example);
+		return channels;
+	}
+
+	@Override
+	public List<SmppUserVo> getAllSmppUser() {
+
+		List<SmppUserVo> smppUserVos = smppMapper.selectUser(null);
+
+
+		if (smppUserVos != null && smppUserVos.size() > 0) {
+			List<SmppUserVo> list;
+			for (SmppUserVo smppUserVo : smppUserVos) {
+				String userIds = smppUserVo.getUserIds();
+				if (StringUtils.isNotBlank(userIds)) {
+					List<Integer> listIds = Arrays.asList(userIds.split(",")).stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
+					list = smppMapper.selectUser(listIds);
+					smppUserVo.setList(list);
+				}
+			}
+		}
+
+		return smppUserVos;
+	}
+
+	//
 //
 //
 //    @Override
