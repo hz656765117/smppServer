@@ -100,7 +100,7 @@ public class RptRedisConsumer implements Runnable {
 			MsgVo msgVo = (MsgVo) obj;
 			String preMsgId = msgVo.getMsgId();
 
-			SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm.getSystemId(), msgVo.getSenderId());
+			SmppSession smppSession = PduUtils.getServerSmppSession(msgVo.getSmppUser(), msgVo.getSmppPwd());
 			//如果获取不到通道，暂时先丢弃，之后要缓存处理，另起线程重发状态报告
 			if (smppSession == null) {
 				return;
@@ -108,7 +108,7 @@ public class RptRedisConsumer implements Runnable {
 
 
 			//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-			if (StaticValue.CHANNEL_MK_LIST.contains(deliverSm.getDestAddress().getAddress())) {
+			if (StaticValue.CHANNEL_MK_LIST.contains(msgVo.getSenderId())) {
 				String mbl = deliverSm.getSourceAddress().getAddress();
 				String areaCode = PduUtils.getAreaCode(mbl);
 				//马来西亚和越南 只有accepted
@@ -144,7 +144,6 @@ public class RptRedisConsumer implements Runnable {
 				Tlv tlv = getTlv(realMsgid);
 				deliverSm.setOptionalParameter(tlv);
 
-
 				Address destAddress = deliverSm.getDestAddress();
 				SmppUserVo smppUserByUserPwd = PduUtils.getSmppUserByUserPwd(msgVo.getSmppUser(), msgVo.getSmppPwd());
 				destAddress.setAddress(smppUserByUserPwd.getChannel());
@@ -156,25 +155,18 @@ public class RptRedisConsumer implements Runnable {
 				removeMap.put(messageId, preMsgId);
 				smppSession.sendRequestPdu(deliverSm, 10000, true);
 			} catch (Exception e) {
-				LOGGER.error("{}-处理长短信状态报告转发异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
 			}
 
-		}
 
-		if (removeMap != null && removeMap.size() > 0) {
-			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
-				rptRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, entry.getKey());
+			if (removeMap != null && removeMap.size() > 0) {
+				for (Map.Entry<String, String> entry : removeMap.entrySet()) {
+					rptRedisConsumer.redisUtil.hmRemove(SmppServerConstants.CM_MSGID_CACHE, entry.getKey());
+				}
 			}
+
 		} else {
-			try {
-				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
-				deliverSm.setShortMessage(bytes);
-				deliverSm.calculateAndSetCommandLength();
-				SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
-				smppSession.sendRequestPdu(deliverSm, 10000, true);
-			} catch (Exception e) {
-				LOGGER.error("{}-处理短短信状态报告转发异常", Thread.currentThread().getName(), e);
-			}
+			LOGGER.error("{}-处理短短信状态报告转发异常,未能匹配到msgid（{}）systemid({}),senderId({})", Thread.currentThread().getName(), messageId, deliverSm.getSystemId(), deliverSm.getDestAddress().getAddress());
 		}
 
 

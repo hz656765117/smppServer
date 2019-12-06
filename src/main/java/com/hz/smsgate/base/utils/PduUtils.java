@@ -111,16 +111,16 @@ public class PduUtils {
 		return null;
 	}
 
-	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
-		SmppSession smppSession;
-		//根据通道获取session
-		String channel = deliverSm.getDestAddress().getAddress();
-		String systemId = deliverSm.getSystemId();
-
-		smppSession = getServerSmppSession(systemId, channel);
-
-		return smppSession;
-	}
+//	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
+//		SmppSession smppSession;
+//		//根据通道获取session
+//		String channel = deliverSm.getDestAddress().getAddress();
+//		String systemId = deliverSm.getSystemId();
+//
+//		smppSession = getServerSmppSession(systemId, channel);
+//
+//		return smppSession;
+//	}
 
 	public static SmppUserVo getSmppUserFather(String curSystemId, String curSenderId) {
 		if (StringUtils.isBlank(curSystemId) || StringUtils.isBlank(curSenderId)) {
@@ -210,34 +210,56 @@ public class PduUtils {
 		return flag;
 	}
 
-
-	public static SmppSession getServerSmppSession(String systemId, String senderId) {
+	public static SmppSession getServerSmppSession(String smppUser, String smppPwd) {
 		SmppSession smppSession = null;
 		try {
-			SmppUserVo smppUserVo = getSmppUserFatherBefore(systemId, senderId);
-			LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, senderId, smppUserVo != null ? smppUserVo.toString() : null);
-
+			SmppUserVo smppUserVo = getSmppUserByUserPwd(smppUser, smppPwd);
 
 			if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
-				LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+				LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser(),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
 				return smppSession;
 			}
 
 			smppSession = getSmppSessionBySmppUser(smppUserVo);
-			if (smppSession == null) {
-				smppUserVo = getSmppUserSonBefore(systemId, senderId);
-				smppSession = getSmppSessionBySmppUser(smppUserVo);
-			}
+
 
 			if (smppSession == null) {
-				LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+				LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser(),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
 			}
 		} catch (Exception e) {
-			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(smppUser(),smppPwd({}))-------", Thread.currentThread().getName(), smppUser, smppPwd);
 		}
 
 		return smppSession;
 	}
+
+//	public static SmppSession getServerSmppSession(String systemId, String senderId) {
+//		SmppSession smppSession = null;
+//		try {
+//			SmppUserVo smppUserVo = getSmppUserFatherBefore(systemId, senderId);
+//			LOGGER.info("systemid({}),senderid({})获取ServerSmppSession,获取到的对象为{}", systemId, senderId, smppUserVo != null ? smppUserVo.toString() : null);
+//
+//
+//			if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
+//				LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+//				return smppSession;
+//			}
+//
+//			smppSession = getSmppSessionBySmppUser(smppUserVo);
+//			if (smppSession == null) {
+//				smppUserVo = getSmppUserSonBefore(systemId, senderId);
+//				smppSession = getSmppSessionBySmppUser(smppUserVo);
+//			}
+//
+//			if (smppSession == null) {
+//				LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+//			}
+//		} catch (Exception e) {
+//			LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(通道为：{}，systemId为：{},password为：{})-------", Thread.currentThread().getName(), senderId, systemId);
+//		}
+//
+//		return smppSession;
+//	}
 
 
 	public static SmppSession getSmppSessionBySmppUser(SmppUserVo smppUserVo) {
