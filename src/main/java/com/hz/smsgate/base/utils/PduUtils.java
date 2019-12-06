@@ -78,6 +78,20 @@ public class PduUtils {
 		return gwChannel;
 	}
 
+	public static SmppUserVo getSmppUserByUserPwd(String smppUser, String smppPwd) {
+		if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
+			return null;
+		}
+
+		for (SmppUserVo smppUserVo : StaticValue.SMPP_USER) {
+			if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd())) {
+				return smppUserVo;
+			}
+
+		}
+		return null;
+	}
+
 
 	public static SessionKey getRealSystemId(String systemId, String senderId) {
 		SessionKey sessionKey = new SessionKey("CM0001", "888");
@@ -98,7 +112,7 @@ public class PduUtils {
 	}
 
 	public static SmppSession getServerSmppSession(DeliverSm deliverSm) {
-		SmppSession smppSession = null;
+		SmppSession smppSession;
 		//根据通道获取session
 		String channel = deliverSm.getDestAddress().getAddress();
 		String systemId = deliverSm.getSystemId();
@@ -145,9 +159,6 @@ public class PduUtils {
 
 		return null;
 	}
-
-
-
 
 
 	public static SmppUserVo getSmppUserFatherBefore(String curSystemId, String curSenderId) {

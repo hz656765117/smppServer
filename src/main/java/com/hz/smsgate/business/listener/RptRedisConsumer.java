@@ -4,6 +4,7 @@ import com.hz.smsgate.base.constants.SmppServerConstants;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
+import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.pojo.Tlv;
 import com.hz.smsgate.base.smpp.transcoder.DefaultPduTranscoder;
@@ -13,6 +14,8 @@ import com.hz.smsgate.base.smpp.transcoder.PduTranscoderContext;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.business.pojo.MsgVo;
+import com.hz.smsgate.business.pojo.SmppUserVo;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,18 +82,9 @@ public class RptRedisConsumer implements Runnable {
 	public void sendDeliverSm(DeliverSm deliverSm) {
 		Map<String, String> removeMap = new LinkedHashMap<>();
 
-		SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
-		//如果获取不到通道，暂时先丢弃，之后要缓存处理，另起线程重发状态报告
-		if (smppSession == null) {
-			return;
-		}
-
-//		deliverSm = reWriteDeliverSm(deliverSm);
-
-
 		String str = new String(deliverSm.getShortMessage());
-		DeliveryReceipt deliveryReceipt = null;
-		String messageId = "";
+		DeliveryReceipt deliveryReceipt;
+		String messageId;
 		try {
 			deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
 			messageId = deliveryReceipt.getMessageId();
@@ -99,30 +93,39 @@ public class RptRedisConsumer implements Runnable {
 			return;
 		}
 
-		//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-		if (StaticValue.CHANNEL_MK_LIST.contains(deliverSm.getDestAddress().getAddress())) {
-			String mbl = deliverSm.getSourceAddress().getAddress();
-			String areaCode = PduUtils.getAreaCode(mbl);
-			//马来西亚和越南 只有accepted
-			if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
-				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
-					deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
-				}
-			} else {
-				if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
-					LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
-					return;
-				}
-			}
-
-		}
-
-
-
 
 		Object obj = rptRedisConsumer.redisUtil.hmGet(SmppServerConstants.CM_MSGID_CACHE, messageId);
 		if (obj != null) {
-			String preMsgId = obj.toString();
+
+			MsgVo msgVo = (MsgVo) obj;
+			String preMsgId = msgVo.getMsgId();
+
+			SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm.getSystemId(), msgVo.getSenderId());
+			//如果获取不到通道，暂时先丢弃，之后要缓存处理，另起线程重发状态报告
+			if (smppSession == null) {
+				return;
+			}
+
+
+			//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
+			if (StaticValue.CHANNEL_MK_LIST.contains(deliverSm.getDestAddress().getAddress())) {
+				String mbl = deliverSm.getSourceAddress().getAddress();
+				String areaCode = PduUtils.getAreaCode(mbl);
+				//马来西亚和越南 只有accepted
+				if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_VIETNAM.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
+					if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+						deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
+					}
+				} else {
+					if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
+						LOGGER.info("渠道为：{}的状态报告，状态为：{}的丢弃,状态报告信息为：{}", deliverSm.getDestAddress().getAddress(), deliveryReceipt.getState(), deliveryReceipt.toString());
+						return;
+					}
+				}
+
+			}
+
+
 			LOGGER.info("状态报告响应systemid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), messageId, preMsgId);
 			try {
 				String[] split = preMsgId.split("-");
@@ -140,7 +143,15 @@ public class RptRedisConsumer implements Runnable {
 
 				Tlv tlv = getTlv(realMsgid);
 				deliverSm.setOptionalParameter(tlv);
+
+
+				Address destAddress = deliverSm.getDestAddress();
+				SmppUserVo smppUserByUserPwd = PduUtils.getSmppUserByUserPwd(msgVo.getSmppUser(), msgVo.getSmppPwd());
+				destAddress.setAddress(smppUserByUserPwd.getChannel());
+				deliverSm.setDestAddress(destAddress);
+
 				deliverSm.calculateAndSetCommandLength();
+
 
 				removeMap.put(messageId, preMsgId);
 				smppSession.sendRequestPdu(deliverSm, 10000, true);
@@ -149,7 +160,6 @@ public class RptRedisConsumer implements Runnable {
 			}
 
 		}
-
 
 		if (removeMap != null && removeMap.size() > 0) {
 			for (Map.Entry<String, String> entry : removeMap.entrySet()) {
@@ -160,7 +170,7 @@ public class RptRedisConsumer implements Runnable {
 				byte[] bytes = deliveryReceipt.toShortMessage().getBytes();
 				deliverSm.setShortMessage(bytes);
 				deliverSm.calculateAndSetCommandLength();
-
+				SmppSession smppSession = PduUtils.getServerSmppSession(deliverSm);
 				smppSession.sendRequestPdu(deliverSm, 10000, true);
 			} catch (Exception e) {
 				LOGGER.error("{}-处理短短信状态报告转发异常", Thread.currentThread().getName(), e);

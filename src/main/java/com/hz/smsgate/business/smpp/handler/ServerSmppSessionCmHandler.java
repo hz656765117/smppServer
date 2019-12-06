@@ -12,6 +12,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
+import com.hz.smsgate.business.pojo.MsgVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -95,9 +96,10 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 					//一个账号发多个国家
 					submitSm = getRealSubmitSm(submitSm, session);
+					MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
 
 					try {
-						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgid);
+						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgVo);
 						putSelfQueue(submitSm);
 					} catch (Exception e) {
 						logger.error("-----------短短信下行接收，加入队列异常。------------- ", e);
@@ -139,7 +141,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 		}
 
 		try {
-			SmppUserVo smppUserFather = getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+			SmppUserVo smppUserFather = PduUtils.getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
 			//如果不是父账号，不做处理
 			if (smppUserFather == null) {
 				//如果查不到账号，则拿绑定的账号当做systemId
@@ -196,19 +198,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 		return submitSm;
 	}
 
-	public static SmppUserVo getSmppUserByUserPwd(String smppUser, String smppPwd) {
-		if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
-			return null;
-		}
 
-		for (SmppUserVo smppUserVo : StaticValue.SMPP_USER) {
-			if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd())) {
-				return smppUserVo;
-			}
-
-		}
-		return null;
-	}
 
 
 	/**
