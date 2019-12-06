@@ -27,11 +27,11 @@ public class SmppUtils {
 		// create a server configuration
 		SmppServerConfiguration configuration = new SmppServerConfiguration();
 		configuration.setPort(port);
-		configuration.setMaxConnectionSize(10);
+		configuration.setMaxConnectionSize(20);
 		configuration.setNonBlockingSocketsEnabled(true);
 		configuration.setDefaultRequestExpiryTimeout(30000);
 		configuration.setDefaultWindowMonitorInterval(15000);
-		configuration.setDefaultWindowSize(50);
+		configuration.setDefaultWindowSize(100);
 		configuration.setDefaultWindowWaitTimeout(configuration.getDefaultRequestExpiryTimeout());
 		configuration.setDefaultSessionCountersEnabled(true);
 		configuration.setJmxEnabled(true);
