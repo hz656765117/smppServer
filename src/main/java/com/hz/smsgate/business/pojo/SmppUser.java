@@ -38,13 +38,25 @@ public class SmppUser implements Serializable {
 
     /**
      * VARCHAR(255)<br>
+     * 区号
+     */
+    private String areaCode;
+
+    /**
+     * INTEGER(10)<br>
+     * 短信类型  0：opt  1：营销
+     */
+    private Integer msgType;
+
+    /**
+     * VARCHAR(255)<br>
      * 运营商通道绑定表主键id
      */
     private String sysChannelId;
 
     /**
      * INTEGER(10)<br>
-     * 
+     * 状态标识 0：启用  0：禁用
      */
     private Integer flag;
 
@@ -154,6 +166,38 @@ public class SmppUser implements Serializable {
 
     /**
      * VARCHAR(255)<br>
+     * 获得 区号
+     */
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    /**
+     * VARCHAR(255)<br>
+     * 设置 区号
+     */
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode == null ? null : areaCode.trim();
+    }
+
+    /**
+     * INTEGER(10)<br>
+     * 获得 短信类型  0：opt  1：营销
+     */
+    public Integer getMsgType() {
+        return msgType;
+    }
+
+    /**
+     * INTEGER(10)<br>
+     * 设置 短信类型  0：opt  1：营销
+     */
+    public void setMsgType(Integer msgType) {
+        this.msgType = msgType;
+    }
+
+    /**
+     * VARCHAR(255)<br>
      * 获得 运营商通道绑定表主键id
      */
     public String getSysChannelId() {
@@ -170,7 +214,7 @@ public class SmppUser implements Serializable {
 
     /**
      * INTEGER(10)<br>
-     * 获得 
+     * 获得 状态标识 0：启用  0：禁用
      */
     public Integer getFlag() {
         return flag;
@@ -178,7 +222,7 @@ public class SmppUser implements Serializable {
 
     /**
      * INTEGER(10)<br>
-     * 设置 
+     * 设置 状态标识 0：启用  0：禁用
      */
     public void setFlag(Integer flag) {
         this.flag = flag;
@@ -259,6 +303,8 @@ public class SmppUser implements Serializable {
         sb.append(", spPwd=").append(spPwd);
         sb.append(", systemid=").append(systemid);
         sb.append(", password=").append(password);
+        sb.append(", areaCode=").append(areaCode);
+        sb.append(", msgType=").append(msgType);
         sb.append(", sysChannelId=").append(sysChannelId);
         sb.append(", flag=").append(flag);
         sb.append(", userIds=").append(userIds);
@@ -286,6 +332,8 @@ public class SmppUser implements Serializable {
             && (this.getSpPwd() == null ? other.getSpPwd() == null : this.getSpPwd().equals(other.getSpPwd()))
             && (this.getSystemid() == null ? other.getSystemid() == null : this.getSystemid().equals(other.getSystemid()))
             && (this.getPassword() == null ? other.getPassword() == null : this.getPassword().equals(other.getPassword()))
+            && (this.getAreaCode() == null ? other.getAreaCode() == null : this.getAreaCode().equals(other.getAreaCode()))
+            && (this.getMsgType() == null ? other.getMsgType() == null : this.getMsgType().equals(other.getMsgType()))
             && (this.getSysChannelId() == null ? other.getSysChannelId() == null : this.getSysChannelId().equals(other.getSysChannelId()))
             && (this.getFlag() == null ? other.getFlag() == null : this.getFlag().equals(other.getFlag()))
             && (this.getUserIds() == null ? other.getUserIds() == null : this.getUserIds().equals(other.getUserIds()))
@@ -303,6 +351,8 @@ public class SmppUser implements Serializable {
         result = prime * result + ((getSpPwd() == null) ? 0 : getSpPwd().hashCode());
         result = prime * result + ((getSystemid() == null) ? 0 : getSystemid().hashCode());
         result = prime * result + ((getPassword() == null) ? 0 : getPassword().hashCode());
+        result = prime * result + ((getAreaCode() == null) ? 0 : getAreaCode().hashCode());
+        result = prime * result + ((getMsgType() == null) ? 0 : getMsgType().hashCode());
         result = prime * result + ((getSysChannelId() == null) ? 0 : getSysChannelId().hashCode());
         result = prime * result + ((getFlag() == null) ? 0 : getFlag().hashCode());
         result = prime * result + ((getUserIds() == null) ? 0 : getUserIds().hashCode());

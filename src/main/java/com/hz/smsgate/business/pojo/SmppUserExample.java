@@ -445,6 +445,136 @@ public class SmppUserExample {
             return (Criteria) this;
         }
 
+        public Criteria andAreaCodeIsNull() {
+            addCriterion("area_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeIsNotNull() {
+            addCriterion("area_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeEqualTo(String value) {
+            addCriterion("area_code =", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotEqualTo(String value) {
+            addCriterion("area_code <>", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeGreaterThan(String value) {
+            addCriterion("area_code >", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("area_code >=", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeLessThan(String value) {
+            addCriterion("area_code <", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeLessThanOrEqualTo(String value) {
+            addCriterion("area_code <=", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeLike(String value) {
+            addCriterion("area_code like", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotLike(String value) {
+            addCriterion("area_code not like", value, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeIn(List<String> values) {
+            addCriterion("area_code in", values, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotIn(List<String> values) {
+            addCriterion("area_code not in", values, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeBetween(String value1, String value2) {
+            addCriterion("area_code between", value1, value2, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaCodeNotBetween(String value1, String value2) {
+            addCriterion("area_code not between", value1, value2, "areaCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeIsNull() {
+            addCriterion("msg_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeIsNotNull() {
+            addCriterion("msg_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeEqualTo(Integer value) {
+            addCriterion("msg_type =", value, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeNotEqualTo(Integer value) {
+            addCriterion("msg_type <>", value, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeGreaterThan(Integer value) {
+            addCriterion("msg_type >", value, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("msg_type >=", value, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeLessThan(Integer value) {
+            addCriterion("msg_type <", value, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("msg_type <=", value, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeIn(List<Integer> values) {
+            addCriterion("msg_type in", values, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeNotIn(List<Integer> values) {
+            addCriterion("msg_type not in", values, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeBetween(Integer value1, Integer value2) {
+            addCriterion("msg_type between", value1, value2, "msgType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("msg_type not between", value1, value2, "msgType");
+            return (Criteria) this;
+        }
+
         public Criteria andSysChannelIdIsNull() {
             addCriterion("sys_channel_id is null");
             return (Criteria) this;
