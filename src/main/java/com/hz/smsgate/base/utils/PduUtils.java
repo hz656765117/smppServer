@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @Auther: huangzhuo
@@ -61,8 +62,8 @@ public class PduUtils {
 		if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
 			return null;
 		}
-
-		for (SmppUserVo smppUserVo : SmppServerInit.SMPP_USER) {
+		List<SmppUserVo> smppUser1 = SmppServerInit.SMPP_USER;
+		for (SmppUserVo smppUserVo : smppUser1) {
 			if (smppUser.equals(smppUserVo.getSmppUser()) && smppPwd.equals(smppUserVo.getSmppPwd())) {
 				return smppUserVo;
 			}
