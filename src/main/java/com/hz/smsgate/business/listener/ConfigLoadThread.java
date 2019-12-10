@@ -41,7 +41,7 @@ public class ConfigLoadThread implements Runnable {
 		while (true) {
 
 			try {
-				Thread.sleep(30000);
+				Thread.sleep(300000);
 				configLoadThread.smppServerInit.initConfigs();
 				configLoadThread.smppServerInit.initChannels();
 				configLoadThread.smppServerInit.initMkList();
