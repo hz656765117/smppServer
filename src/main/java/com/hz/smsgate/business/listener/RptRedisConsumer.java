@@ -57,7 +57,11 @@ public class RptRedisConsumer implements Runnable {
 	@Override
 	public void run() {
 		DeliverSm deliverSm;
-
+		try {
+			Thread.sleep(3000);
+		} catch (Exception e) {
+			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
+		}
 		while (true) {
 			try {
 				if (rptRedisConsumer.redisUtil != null) {
