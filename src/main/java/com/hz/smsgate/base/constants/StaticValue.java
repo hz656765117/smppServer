@@ -117,7 +117,7 @@ public class StaticValue {
 //	public static Map<String, SessionKey> CHANNL_REL = null;
 
 
-	public static List<SmppUserVo> SMPP_USER = null;
+//	public static List<SmppUserVo> SMPP_USER = null;
 
 
 

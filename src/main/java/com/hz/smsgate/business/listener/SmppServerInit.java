@@ -4,8 +4,10 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
-import com.hz.smsgate.base.utils.*;
-import com.hz.smsgate.business.pojo.Channel;
+import com.hz.smsgate.base.utils.PropertiesLoader;
+import com.hz.smsgate.base.utils.RedisUtil;
+import com.hz.smsgate.base.utils.SmppUtils;
+import com.hz.smsgate.base.utils.ThreadPoolHelper;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
@@ -62,6 +64,8 @@ public class SmppServerInit {
 	 */
 	public static List<SessionKey> CHANNEL_TZ_LIST = new ArrayList<>();
 
+	public static List<SmppUserVo> SMPP_USER = new LinkedList<>();
+
 
 	@PostConstruct
 	public void postConstruct() throws Exception {
@@ -80,7 +84,6 @@ public class SmppServerInit {
 	}
 
 
-
 	public void initChannels() {
 		CHANNL_REL.clear();
 		Map<String, SessionKey> map = new LinkedHashMap<>();
@@ -94,7 +97,6 @@ public class SmppServerInit {
 		}
 		CHANNL_REL = map;
 	}
-
 
 
 	public void initMkList() {
@@ -133,8 +135,6 @@ public class SmppServerInit {
 	}
 
 
-
-
 	public static void initSmppServer() {
 		try {
 			int serverPort = StaticValue.SERVER_PORT;
@@ -154,8 +154,8 @@ public class SmppServerInit {
 
 
 	public void initConfigs() {
-		StaticValue.SMPP_USER.clear();
-		StaticValue.SMPP_USER = smppService.getAllSmppUser();
+		SMPP_USER.clear();
+		SMPP_USER = smppService.getAllSmppUser();
 	}
 
 	/**
