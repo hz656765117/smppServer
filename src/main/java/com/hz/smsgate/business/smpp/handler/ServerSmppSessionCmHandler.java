@@ -12,6 +12,7 @@ import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
+import com.hz.smsgate.business.listener.SmppServerInit;
 import com.hz.smsgate.business.pojo.MsgVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import org.apache.commons.lang3.StringUtils;
@@ -210,13 +211,13 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 		String senderId = submitSm.getSourceAddress().getAddress();
 
 		//营销
-		if (StaticValue.CHANNEL_YX_LIST.contains(senderId)) {
+		if (SmppServerInit.CHANNEL_YX_LIST.contains(senderId)) {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_YX, submitSm);
 			//通知
-		} else if (StaticValue.CHANNEL_TZ_LIST.contains(senderId)) {
+		} else if (SmppServerInit.CHANNEL_TZ_LIST.contains(senderId)) {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_TZ, submitSm);
 			//opt  验证码
-		} else if (StaticValue.CHANNEL_OPT_LIST.contains(senderId)) {
+		} else if (SmppServerInit.CHANNEL_OPT_LIST.contains(senderId)) {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, submitSm);
 			//没有分类的 放到营销短信中去
 		} else {

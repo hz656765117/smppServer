@@ -1,12 +1,12 @@
 package com.hz.smsgate.business.service.Impl;
 
 
-import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.business.mybatis.mapper.ChannelMapper;
-
+import com.hz.smsgate.business.mybatis.mapper.OperatorMapper;
 import com.hz.smsgate.business.mybatis.mapper.SmppMapper;
 import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.ChannelExample;
+import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.service.SmppService;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -27,6 +28,10 @@ public class SmppServiceImpl implements SmppService {
 
 	@Autowired
 	private ChannelMapper channelMapper;
+
+	@Autowired
+	private OperatorMapper operatorMapper;
+
 	@Autowired
 	private SmppMapper smppMapper;
 
@@ -62,6 +67,13 @@ public class SmppServiceImpl implements SmppService {
 
 		return smppUserVos;
 	}
+
+	@Override
+	public List<OperatorVo> getAllOperator() {
+		List<OperatorVo> operatorVos = smppMapper.selectOperator();
+		return operatorVos;
+	}
+
 
 	//
 //

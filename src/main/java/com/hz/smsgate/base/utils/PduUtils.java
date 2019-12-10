@@ -1,14 +1,8 @@
 package com.hz.smsgate.base.utils;
 
-import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.constants.StaticValue;
-import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
-import com.hz.smsgate.base.smpp.pdu.DeliverSm;
-import com.hz.smsgate.base.smpp.pdu.SubmitSm;
-import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
-import com.hz.smsgate.business.listener.RptRedisConsumer;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Auther: huangzhuo
@@ -64,19 +57,7 @@ public class PduUtils {
 		return areaCode;
 	}
 
-	//获取原通道
-	public static String getRealChannel(String systemId, String gwChannel) {
-		if (StringUtils.isBlank(gwChannel)) {
-			return gwChannel;
-		}
-		SessionKey sessionKey = new SessionKey(systemId, gwChannel);
-		for (Map.Entry<String, SessionKey> entry : StaticValue.CHANNL_REL.entrySet()) {
-			if (sessionKey.equals(entry.getValue())) {
-				return entry.getKey();
-			}
-		}
-		return gwChannel;
-	}
+
 
 	public static SmppUserVo getSmppUserByUserPwd(String smppUser, String smppPwd) {
 		if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {

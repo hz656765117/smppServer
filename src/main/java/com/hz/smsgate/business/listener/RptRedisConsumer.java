@@ -5,6 +5,7 @@ import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pojo.Address;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.pojo.Tlv;
 import com.hz.smsgate.base.smpp.transcoder.DefaultPduTranscoder;
@@ -108,7 +109,8 @@ public class RptRedisConsumer implements Runnable {
 
 
 			//这个通道的运营商会返回两个状态报告 忽略掉accepted  只处理Delivered
-			if (StaticValue.CHANNEL_MK_LIST.contains(msgVo.getSenderId())) {
+			SessionKey sessionKey = new SessionKey(deliverSm.getSystemId(), msgVo.getSenderId());
+			if (SmppServerInit.CHANNEL_MK_LIST.contains(sessionKey)) {
 				String mbl = deliverSm.getSourceAddress().getAddress();
 				String areaCode = PduUtils.getAreaCode(mbl);
 				//马来西亚和越南 只有accepted

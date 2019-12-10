@@ -58,4 +58,42 @@
 
 
 
+    <resultMap id="BaseResultMap1" type="com.hz.smsgate.business.pojo.OperatorVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="ip" jdbcType="VARCHAR" property="ip" />
+        <result column="port" jdbcType="VARCHAR" property="port" />
+        <result column="systemid" jdbcType="VARCHAR" property="systemid" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="flag" jdbcType="INTEGER" property="flag" />
+        <result column="desc" jdbcType="VARCHAR" property="desc" />
+        <result column="channel" jdbcType="VARCHAR" property="channel" />
+        <result column="senderid" jdbcType="VARCHAR" property="senderid" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+    <select id="selectOperator"      resultMap="BaseResultMap1">
+
+        SELECT
+        op.*,
+        ch.type,
+        ch.senderid,
+        ch.channel
+        FROM
+        t_operator op
+        LEFT JOIN t_sys_chanel_ref sc ON op.id = sc.sys_id
+        LEFT JOIN t_channel ch ON ch.id = sc.channel_id
+        WHERE
+        op.flag = 0
+        ORDER BY
+        op.systemid
+    </select>
+
+
+
+
+
+
 </mapper>
