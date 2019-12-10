@@ -42,18 +42,7 @@ spring:
 #    poolPreparedStatements: true
 #    maxOpenPreparedStatements: 20
   
-  # buSihhHTqfgjIOUFiHHkZr9L6hDAKk 
-  #LTAIIRIeGvIAVpUi
-  #threedmax1
-  # oss-cn-shanghai.aliyuncs.com
-#oss:
-#  end-point: oss-cn-shenzhen.aliyuncs.com
-#  access-key-id: LTAIpTdiNBRfUzXw
-#  access-key-secret: aLF4fujCnU0DWpzJbayGl3QT1hIbyi
-#  bucket: three-model
-#cs:
-#  project-type: saas
-#  ftp-path: 127.0.0.1
+
 
 #logging:
 #  path: G:/log/
