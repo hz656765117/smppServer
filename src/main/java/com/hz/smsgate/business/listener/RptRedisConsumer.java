@@ -58,7 +58,7 @@ public class RptRedisConsumer implements Runnable {
 	public void run() {
 		DeliverSm deliverSm;
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(30000);
 		} catch (Exception e) {
 			LOGGER.error("{}-线程启动异常", Thread.currentThread().getName(), e);
 		}
@@ -154,7 +154,7 @@ public class RptRedisConsumer implements Runnable {
 				SmppUserVo smppUserByUserPwd = PduUtils.getSmppUserByUserPwd(msgVo.getSmppUser(), msgVo.getSmppPwd());
 				destAddress.setAddress(smppUserByUserPwd.getChannel());
 				deliverSm.setDestAddress(destAddress);
-
+				deliverSm.removeSequenceNumber();
 				deliverSm.calculateAndSetCommandLength();
 
 
