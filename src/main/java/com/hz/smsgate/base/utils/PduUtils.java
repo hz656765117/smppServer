@@ -1,10 +1,13 @@
 package com.hz.smsgate.base.utils;
 
+import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.business.listener.SmppServerInit;
 import com.hz.smsgate.business.pojo.SmppUserVo;
 import com.hz.smsgate.business.smpp.impl.DefaultSmppServer;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,26 @@ public class PduUtils {
 
 		return areaCode;
 	}
+
+	/**
+	 * 获取真实msgid
+	 * @param deliverSm 状态报告
+	 * @return
+	 */
+	public static String getMsgId(DeliverSm deliverSm) {
+		String str = new String(deliverSm.getShortMessage());
+		DeliveryReceipt deliveryReceipt;
+		String messageId = "";
+		try {
+			deliveryReceipt = DeliveryReceipt.parseShortMessage(str, DateTimeZone.UTC);
+			messageId = deliveryReceipt.getMessageId();
+		} catch (Exception e) {
+			LOGGER.error("{}-处理短信状态报告内容解析异常", Thread.currentThread().getName(), e);
+			return messageId;
+		}
+		return messageId;
+	}
+
 
 
 

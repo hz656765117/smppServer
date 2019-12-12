@@ -97,6 +97,12 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 					//一个账号发多个国家
 					submitSm = getRealSubmitSm(submitSm, session);
+
+					if (StringUtils.isBlank(submitSm.getSystemId())) {
+						logger.error("systemId({}),password({}),senderId({})  获取真实systemId和senderId 失败------------- ", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
+						return submitResp;
+					}
+
 					MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
 
 					try {
@@ -143,10 +149,8 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 		try {
 			SmppUserVo smppUserFather = PduUtils.getSmppUserByUserPwd(session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
-			//如果不是父账号，不做处理
+			//如果查不到账号，不发送
 			if (smppUserFather == null) {
-				//如果查不到账号，则拿绑定的账号当做systemId
-				submitSm.setSystemId(session.getConfiguration().getSystemId());
 				return submitSm;
 			}
 
@@ -198,8 +202,6 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 		return submitSm;
 	}
-
-
 
 
 	/**
