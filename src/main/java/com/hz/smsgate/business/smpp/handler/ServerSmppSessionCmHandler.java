@@ -99,7 +99,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 					submitSm = getRealSubmitSm(submitSm, session);
 
 					if (StringUtils.isBlank(submitSm.getSystemId())) {
-						logger.error("systemId({}),password({}),senderId({})  获取真实systemId和senderId 失败------------- ", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
+						logger.error("systemId({}),password({}),senderId({})  获取smpp账号失败，该短信（mbl：{}，content：{}）不下发------------- ", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), new String(submitSm.getShortMessage()));
 						return submitResp;
 					}
 
