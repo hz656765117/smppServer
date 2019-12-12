@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.lang.ref.WeakReference;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -178,14 +179,32 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 			String systemId = null;
 			String senderId = null;
+
+			List<SmppUserVo> areaList = new LinkedList<>();
+
 			for (SmppUserVo smppUser : list) {
-				if (areaCode.equals(smppUser.getAreaCode()) && msgType.equals(smppUser.getMsgType())) {
-					systemId = smppUser.getSystemid();
-					senderId = smppUser.getSenderid();
-					break;
+				if (areaCode.equals(smppUser.getAreaCode())) {
+					areaList.add(smppUser);
 				}
 			}
 
+
+			if (areaList == null || areaList.size() <= 0) {
+				return submitSm;
+			}
+
+			if (areaList.size() == 1) {
+				systemId = areaList.get(0).getSystemid();
+				senderId = areaList.get(0).getSenderid();
+			} else {
+				for (SmppUserVo smppUser : areaList) {
+					if (msgType.equals(smppUser.getMsgType())) {
+						systemId = smppUser.getSystemid();
+						senderId = smppUser.getSenderid();
+						break;
+					}
+				}
+			}
 
 			if (StringUtils.isNotBlank(systemId) && StringUtils.isNotBlank(senderId)) {
 				logger.info("systemId({}),senderId({})  获取真实systemId({})和senderId({})成功------------- ", submitSm.getSystemId(), sourceAddress.getAddress(), systemId, senderId);
