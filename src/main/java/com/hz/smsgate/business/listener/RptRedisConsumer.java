@@ -135,10 +135,7 @@ public class RptRedisConsumer implements Runnable {
 			LOGGER.info("状态报告响应systemid为{}，缓存中key为{}，value为{}", deliverSm.getSystemId(), messageId, preMsgId);
 			try {
 				String[] split = preMsgId.split("-");
-				if (split != null && split.length > 3) {
-					//替换sequenceNumber
-					deliverSm.setSequenceNumber(Integer.valueOf(split[3]));
-				}
+
 
 				String realMsgid = split[0];
 				//替换messageId
@@ -154,7 +151,21 @@ public class RptRedisConsumer implements Runnable {
 				SmppUserVo smppUserByUserPwd = PduUtils.getSmppUserByUserPwd(msgVo.getSmppUser(), msgVo.getSmppPwd());
 				destAddress.setAddress(smppUserByUserPwd.getChannel());
 				deliverSm.setDestAddress(destAddress);
+
+
+
+				//补齐号码
+				Address sourceAddress = deliverSm.getSourceAddress();
+				String address1 = sourceAddress.getAddress();
+				if (!address1.startsWith("0")) {
+					address1 = "00" + address1;
+					sourceAddress.setAddress(address1);
+					deliverSm.setSourceAddress(sourceAddress);
+				}
+
+
 				deliverSm.removeSequenceNumber();
+
 				deliverSm.calculateAndSetCommandLength();
 
 
