@@ -8,6 +8,7 @@ import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.Address;
 import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
@@ -230,15 +231,16 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 	 */
 	public void putSelfQueue(SubmitSm submitSm) {
 		String senderId = submitSm.getSourceAddress().getAddress();
+		SessionKey sessionKey = new SessionKey(submitSm.getSystemId(), senderId);
 
 		//营销
-		if (SmppServerInit.CHANNEL_YX_LIST.contains(senderId)) {
+		if (SmppServerInit.CHANNEL_YX_LIST.contains(sessionKey)) {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_YX, submitSm);
 			//通知
-		} else if (SmppServerInit.CHANNEL_TZ_LIST.contains(senderId)) {
+		} else if (SmppServerInit.CHANNEL_TZ_LIST.contains(sessionKey)) {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_TZ, submitSm);
 			//opt  验证码
-		} else if (SmppServerInit.CHANNEL_OPT_LIST.contains(senderId)) {
+		} else if (SmppServerInit.CHANNEL_OPT_LIST.contains(sessionKey)) {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_OPT, submitSm);
 			//没有分类的 放到营销短信中去
 		} else {
