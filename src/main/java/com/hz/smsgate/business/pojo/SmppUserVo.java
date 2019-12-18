@@ -83,7 +83,7 @@ public class SmppUserVo implements Serializable {
 
     /**
      * INTEGER(10)<br>
-     * 
+     *
      */
     private Integer flag;
 
@@ -92,6 +92,13 @@ public class SmppUserVo implements Serializable {
      * 子账号id
      */
     private String userIds;
+
+
+    private Integer userType;
+
+
+    private String numSegment;
+
 
     /**
      * VARCHAR(255)<br>
@@ -212,7 +219,7 @@ public class SmppUserVo implements Serializable {
 
     /**
      * INTEGER(10)<br>
-     * 获得 
+     * 获得
      */
     public Integer getFlag() {
         return flag;
@@ -220,7 +227,7 @@ public class SmppUserVo implements Serializable {
 
     /**
      * INTEGER(10)<br>
-     * 设置 
+     * 设置
      */
     public void setFlag(Integer flag) {
         this.flag = flag;
@@ -347,5 +354,22 @@ public class SmppUserVo implements Serializable {
 
     public void setMsgType(Integer msgType) {
         this.msgType = msgType;
+    }
+
+
+    public Integer getUserType() {
+        return userType;
+    }
+
+    public void setUserType(Integer userType) {
+        this.userType = userType;
+    }
+
+    public String getNumSegment() {
+        return numSegment;
+    }
+
+    public void setNumSegment(String numSegment) {
+        this.numSegment = numSegment;
     }
 }

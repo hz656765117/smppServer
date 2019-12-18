@@ -11,7 +11,7 @@ import java.util.List;
 public interface SmppMapper {
 
 
-    List<SmppUserVo> selectUser(@Param("list") List<Integer> ids);
+    List<SmppUserVo> selectUser(@Param("list") List<Integer> ids,@Param("userType") Integer userType);
 
     List<OperatorVo> selectOperator();
 

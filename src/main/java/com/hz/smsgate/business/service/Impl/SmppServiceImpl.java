@@ -47,7 +47,7 @@ public class SmppServiceImpl implements SmppService {
 	@Override
 	public List<SmppUserVo> getAllSmppUser() {
 
-		List<SmppUserVo> smppUserVos = smppMapper.selectUser(null);
+		List<SmppUserVo> smppUserVos = smppMapper.selectUser(null, 0);
 
 
 		if (smppUserVos != null && smppUserVos.size() > 0) {
@@ -56,7 +56,7 @@ public class SmppServiceImpl implements SmppService {
 				String userIds = smppUserVo.getUserIds();
 				if (StringUtils.isNotBlank(userIds)) {
 					List<Integer> listIds = Arrays.asList(userIds.split(",")).stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
-					list = smppMapper.selectUser(listIds);
+					list = smppMapper.selectUser(listIds,0);
 					smppUserVo.setSenderid(smppUserVo.getDesc());
 					smppUserVo.setChannel(smppUserVo.getDesc());
 					smppUserVo.setSystemid(smppUserVo.getSmppUser());

@@ -2,58 +2,64 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hz.smsgate.business.mybatis.mapper.SmppMapper">
 
-  <resultMap id="BaseResultMap" type="com.hz.smsgate.business.pojo.SmppUserVo">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="sp_user" jdbcType="VARCHAR" property="spUser" />
-    <result column="sp_pwd" jdbcType="VARCHAR" property="spPwd" />
-    <result column="s_user" jdbcType="VARCHAR" property="smppUser" />
-    <result column="s_pwd" jdbcType="VARCHAR" property="smppPwd" />
-    <result column="systemId" jdbcType="VARCHAR" property="systemid" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
-    <result column="msg_type" jdbcType="INTEGER" property="msgType" />
-    <result column="sys_channel_id" jdbcType="VARCHAR" property="sysChannelId" />
-    <result column="flag" jdbcType="INTEGER" property="flag" />
-    <result column="user_ids" jdbcType="VARCHAR" property="userIds" />
-    <result column="desc" jdbcType="VARCHAR" property="desc" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="channel" jdbcType="VARCHAR" property="channel" />
-    <result column="senderid" jdbcType="VARCHAR" property="senderid" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.hz.smsgate.business.pojo.SmppUserVo">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="sp_user" jdbcType="VARCHAR" property="spUser" />
+        <result column="sp_pwd" jdbcType="VARCHAR" property="spPwd" />
+        <result column="s_user" jdbcType="VARCHAR" property="smppUser" />
+        <result column="s_pwd" jdbcType="VARCHAR" property="smppPwd" />
+        <result column="systemId" jdbcType="VARCHAR" property="systemid" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+        <result column="msg_type" jdbcType="INTEGER" property="msgType" />
+        <result column="sys_channel_id" jdbcType="VARCHAR" property="sysChannelId" />
+        <result column="flag" jdbcType="INTEGER" property="flag" />
+        <result column="user_ids" jdbcType="VARCHAR" property="userIds" />
+        <result column="user_type" jdbcType="INTEGER" property="userType" />
+        <result column="num_segment" jdbcType="VARCHAR" property="numSegment" />
+        <result column="desc" jdbcType="VARCHAR" property="desc" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="channel" jdbcType="VARCHAR" property="channel" />
+        <result column="senderid" jdbcType="VARCHAR" property="senderid" />
+    </resultMap>
 
 
 
-  <select id="selectUser"   parameterType="java.util.List"  resultMap="BaseResultMap">
+    <select id="selectUser"     resultMap="BaseResultMap">
 
-      SELECT
-          su.id,
-          su.sp_user,
-          su.sp_pwd,
-          su.systemId  s_user,
-          su.password  s_pwd,
-          su.area_code,
-          su.msg_type,
-          su.user_ids,
-          su.desc,
-          op.systemid,
-          ch.senderid,
-          ch.channel
-      FROM
-          t_smpp_user su
-          LEFT JOIN t_sys_chanel_ref ref ON su.sys_channel_id = ref.id
-          LEFT JOIN t_channel ch ON ref.channel_id = ch.id
-          LEFT JOIN t_operator op ON ref.sys_id = op.id
-      WHERE
-          su.flag = 0
-          <if test="list != null">
-               and su.id in
-              <foreach item="item" collection="list" separator="," open="(" close=")" index="">
-                  #{item, jdbcType=INTEGER}
-              </foreach>
-          </if>
-
-  </select>
+        SELECT
+        su.id,
+        su.sp_user,
+        su.sp_pwd,
+        su.systemId  s_user,
+        su.password  s_pwd,
+        su.area_code,
+        su.msg_type,
+        su.user_ids,
+        su.num_segment,
+        su.user_type,
+        su.desc,
+        op.systemid,
+        ch.senderid,
+        ch.channel
+        FROM
+        t_smpp_user su
+        LEFT JOIN t_sys_chanel_ref ref ON su.sys_channel_id = ref.id
+        LEFT JOIN t_channel ch ON ref.channel_id = ch.id
+        LEFT JOIN t_operator op ON ref.sys_id = op.id
+        WHERE
+        su.flag = 0
+        <if test="list != null">
+            and su.id in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item, jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="userType != null">
+            and su.user_type =  #{userType, jdbcType=INTEGER}
+        </if>
+    </select>
 
 
 
