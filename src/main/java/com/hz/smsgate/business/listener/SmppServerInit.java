@@ -177,6 +177,9 @@ public class SmppServerInit {
 
 		ConfigLoadThread configLoadThread = new ConfigLoadThread();
 
+		MsgIdTimeOutRemoveThread msgIdTimeOutRemoveThread = new MsgIdTimeOutRemoveThread();
+		ThreadPoolHelper.executeTask(msgIdTimeOutRemoveThread);
+
 		//redis状态报告处理线程
 		ThreadPoolHelper.executeTask(rptRedisConsumer);
 
