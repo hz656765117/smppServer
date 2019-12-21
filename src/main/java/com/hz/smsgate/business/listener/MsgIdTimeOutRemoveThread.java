@@ -47,7 +47,7 @@ public class MsgIdTimeOutRemoveThread implements Runnable {
 		}
 
 		SessionKey key;
-		LOGGER.info("{}-msgid超时移除线程（redis）开始工作......", Thread.currentThread().getName());
+		LOGGER.info("{}-CM_MSGID_CACHE超时移除线程（redis）开始工作......", Thread.currentThread().getName());
 		List<String> keys = new ArrayList<>();
 		while (true) {
 			try {
@@ -60,12 +60,13 @@ public class MsgIdTimeOutRemoveThread implements Runnable {
 							long sendTime = msgVo.getSendTime();
 							long curTime = System.currentTimeMillis();
 							long betTime = curTime - sendTime;
-							long time = 24 * 60 * 60 * 1000;
+							long time = 12 * 60 * 60 * 1000;
 							if (betTime > time) {
 								keys.add(entry.getKey());
 							}
 						}
 						if (keys != null && keys.size() > 0) {
+							LOGGER.info("CM_MSGID_CACHE移除掉{}条msgid", keys.size());
 							msgIdTimeOutRemoveThread.redisUtil.hmRemoves(SmppServerConstants.CM_MSGID_CACHE, keys.toArray());
 							keys.clear();
 						}
@@ -76,7 +77,7 @@ public class MsgIdTimeOutRemoveThread implements Runnable {
 					Thread.sleep(10000);
 				}
 			} catch (Exception e) {
-				LOGGER.error("{}-处理msgid超时移除线程异常", Thread.currentThread().getName(), e);
+				LOGGER.error("{}-处理CM_MSGID_CACHEmsgid超时移除线程异常", Thread.currentThread().getName(), e);
 			}
 
 		}

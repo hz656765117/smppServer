@@ -60,6 +60,25 @@ public class PduUtils {
 	}
 
 	/**
+	 * 获取号段
+	 *
+	 * @param mbl 手机号码
+	 * @return 号段
+	 */
+	public static String getNumSeg(String mbl) {
+		String numSeg = "";
+		if (StringUtils.isBlank(mbl)) {
+			return numSeg;
+		}
+		if (mbl.startsWith("00")) {
+			numSeg = mbl.substring(0, 7);
+		} else {
+			numSeg = 00 + mbl.substring(0, 5);
+		}
+		return numSeg;
+	}
+
+	/**
 	 * 获取真实msgid
 	 * @param deliverSm 状态报告
 	 * @return
