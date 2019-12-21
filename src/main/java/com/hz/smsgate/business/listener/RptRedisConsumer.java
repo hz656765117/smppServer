@@ -78,6 +78,11 @@ public class RptRedisConsumer implements Runnable {
 				}
 			} catch (Exception e) {
 				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
+				try {
+					Thread.sleep(10000);
+				}catch (Exception E){
+
+				}
 			}
 
 		}

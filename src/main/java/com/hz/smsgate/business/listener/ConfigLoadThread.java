@@ -49,6 +49,11 @@ public class ConfigLoadThread implements Runnable {
 
 			} catch (Exception e) {
 				LOGGER.error("{}-处理定时加载数据库中的配置到内存中异常", Thread.currentThread().getName(), e);
+				try {
+					Thread.sleep(10000);
+				}catch (Exception E){
+
+				}
 			}
 
 		}
