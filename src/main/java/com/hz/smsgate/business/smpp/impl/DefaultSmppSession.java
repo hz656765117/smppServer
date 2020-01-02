@@ -505,9 +505,9 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 		// during the encoding process such as looking up the result message
 		if (configuration.getLoggingOptions().isLogPduEnabled()) {
 			if (synchronous) {
-				logger.info("sync send PDU: {}", pdu);
+				logger.info("this host is:{},this port is:{},this system is:{},sync send PDU: {}", this.getConfiguration().getHost(), this.getConfiguration().getPort(), this.getConfiguration().getSystemId(), pdu);
 			} else {
-				logger.info("async send PDU: {}", pdu);
+				logger.info("this host is:{},this port is:{},this system is:{},async send PDU: {}", this.getConfiguration().getHost(), this.getConfiguration().getPort(), this.getConfiguration().getSystemId(), pdu);
 			}
 		}
 
@@ -560,12 +560,12 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 		// we need to log the PDU after encoding since some things only happen
 		// during the encoding process such as looking up the result message
 		if (configuration.getLoggingOptions().isLogPduEnabled()) {
-			logger.info("send PDU: {}", pdu);
+			logger.info("this host is:{},this port is:{},this system is:{},send PDU: {}", this.getConfiguration().getHost(), this.getConfiguration().getPort(), this.getConfiguration().getSystemId(), pdu);
 		}
 
 		if (!channel.isConnected()) {
 			logger.error("Failed to write any response because the channel is not connected any more. Maybe the client has closed the connection? ");
-			return ;
+			return;
 		}
 		// write the pdu out & wait timeout amount of time
 		ChannelFuture channelFuture = this.channel.write(buffer).await();
@@ -581,8 +581,9 @@ public class DefaultSmppSession implements SmppServerSession, SmppSessionChannel
 	@Override
 	public void firePduReceived(Pdu pdu) {
 		if (configuration.getLoggingOptions().isLogPduEnabled()) {
-			logger.info("received PDU: {}", pdu);
+			logger.info("this host is:{},this port is:{},this system is:{},received PDU: {}", this.getConfiguration().getHost(), this.getConfiguration().getPort(), this.getConfiguration().getSystemId(), pdu);
 		}
+
 
 		if (this.sessionHandler instanceof SmppSessionListener) {
 			if (!((SmppSessionListener) this.sessionHandler).firePduReceived(pdu)) {

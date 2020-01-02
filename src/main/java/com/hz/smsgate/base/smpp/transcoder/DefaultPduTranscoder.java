@@ -96,8 +96,13 @@ public class DefaultPduTranscoder implements PduTranscoder {
 		if (pdu.getCommandId() == SmppConstants.CMD_ID_SUBMIT_SM_RESP) {
 			ChannelBuffer copy = buffer.copy();
 			String s = hexDump(copy);
-			LOGGER.info("------------下行响应------------  {}",s);
+			LOGGER.info("------------短信下行 响应------------  {}",s);
 		}
+
+
+
+
+
 
 		return buffer;
 	}
@@ -170,6 +175,7 @@ public class DefaultPduTranscoder implements PduTranscoder {
 				LOGGER.info("------------状态报告 接收------------  {}",hex);
 				pdu = new DeliverSm();
 			} else if (commandId == SmppConstants.CMD_ID_SUBMIT_SM) {
+				LOGGER.info("------------短信下行 接收------------  {}",hex);
  				pdu = new SubmitSm();
 			} else if (commandId == SmppConstants.CMD_ID_DATA_SM) {
 				pdu = new DataSm();
@@ -194,9 +200,10 @@ public class DefaultPduTranscoder implements PduTranscoder {
 			}
 		} else {
 			if (commandId == SmppConstants.CMD_ID_SUBMIT_SM_RESP) {
-				LOGGER.info("------------短信下行  接收------------ {}",hex);
+				LOGGER.info("------------短信下行  响应------------ {}",hex);
 				pdu = new SubmitSmResp();
 			} else if (commandId == SmppConstants.CMD_ID_DELIVER_SM_RESP) {
+				LOGGER.info("------------状态报告  响应------------ {}",hex);
 				pdu = new DeliverSmResp();
 			} else if (commandId == SmppConstants.CMD_ID_DATA_SM_RESP) {
 				pdu = new DataSmResp();

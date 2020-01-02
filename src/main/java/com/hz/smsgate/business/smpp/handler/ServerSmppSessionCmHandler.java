@@ -82,7 +82,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 	@Override
 	public PduResponse firePduRequestReceived(PduRequest pduRequest) {
 		PduResponse response = pduRequest.createResponse();
-
+		long beginTime = System.currentTimeMillis();
 
 		try {
 			if (pduRequest.isRequest()) {
@@ -116,6 +116,9 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 					submitResp.setMessageId(msgid);
 					submitResp.calculateAndSetCommandLength();
+
+					long endTime = System.currentTimeMillis();
+					logger.info("此次请求 systemId({})，短信（mbl：{}，content：{}），耗时{}", session.getConfiguration().getSystemId(), submitSm.getDestAddress().getAddress(), new String(submitSm.getShortMessage()), endTime - beginTime);
 					return submitResp;
 
 				} else if (pduRequest.getCommandId() == SmppConstants.CMD_ID_DELIVER_SM) {

@@ -80,7 +80,7 @@ public class RptRedisConsumer implements Runnable {
 				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
 				try {
 					Thread.sleep(10000);
-				}catch (Exception E){
+				} catch (Exception E) {
 
 				}
 			}
@@ -123,7 +123,7 @@ public class RptRedisConsumer implements Runnable {
 				String mbl = deliverSm.getSourceAddress().getAddress();
 				String areaCode = PduUtils.getAreaCode(mbl);
 				//马来西亚和菲律宾 只有accepted || StaticValue.AREA_CODE_VIETNAM.equals(areaCode)
-				if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode)  || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
+				if (StaticValue.AREA_CODE_MALAYSIA.equals(areaCode) || StaticValue.AREA_CODE_PHILIPPINES.equals(areaCode)) {
 					if (deliveryReceipt.getState() == SmppConstants.STATE_ACCEPTED) {
 						deliveryReceipt.setState(SmppConstants.STATE_DELIVERED);
 					}
@@ -158,7 +158,6 @@ public class RptRedisConsumer implements Runnable {
 				deliverSm.setDestAddress(destAddress);
 
 
-
 				//补齐号码
 				Address sourceAddress = deliverSm.getSourceAddress();
 				String address1 = sourceAddress.getAddress();
@@ -175,7 +174,9 @@ public class RptRedisConsumer implements Runnable {
 
 
 				removeMap.put(messageId, preMsgId);
-				smppSession.sendRequestPdu(deliverSm, 10000, true);
+
+//				smppSession.sendRequestPdu(deliverSm, 10000, true);
+
 			} catch (Exception e) {
 				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
 			}
