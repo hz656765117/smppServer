@@ -64,7 +64,7 @@ public class DeliveryReceipt {
 			.forPattern("yyyyMMddHHmm");
 
 	// the "err" field cannot be longer than 3 chars
-	public static final int FIELD_ERR_MAX_LEN = 3;
+	public static final int FIELD_ERR_MAX_LEN = 20;
 
 	public static final String FIELD_ID = "id:";
 	public static final String FIELD_SUB = "sub:";
