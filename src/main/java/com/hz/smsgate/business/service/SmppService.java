@@ -18,6 +18,6 @@ public interface SmppService {
 
     List<OperatorVo> getAllOperator();
 
-    boolean insertMtTask(SubmitSm submitSm);
+
 
 }

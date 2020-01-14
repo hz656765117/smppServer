@@ -44,9 +44,5 @@ public class SmppServerConstants {
 	 */
 	public static final String CM_DELIVER_SM = "cmDeliverSm";
 
-	/**
-	 * 同步请求到网关
-	 */
-	public static final String SYNC_SUBMIT = "syncSubmit";
 
 }

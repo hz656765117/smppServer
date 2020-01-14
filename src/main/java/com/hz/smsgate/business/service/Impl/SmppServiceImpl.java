@@ -77,20 +77,6 @@ public class SmppServiceImpl implements SmppService {
 	}
 
 
-	@Override
-	public boolean insertMtTask(SubmitSm submitSm) {
-		int i = 0;
-		try {
-			MtTask mtTask = new MtTask();
-			mtTask.setTableName("t_mt_task_202001");
-			mtTask.setMessage(new String(submitSm.getShortMessage(), ChangeCharset.UTF_8));
-			mtTask.setPhone(submitSm.getDestAddress().getAddress());
-			i = mtTaskMapper.insertSelective(mtTask);
-		} catch (Exception e) {
-			LOGGER.error("新增下行明细异常", e);
-		}
 
-		return i > 0;
-	}
 
 }
