@@ -1,21 +1,18 @@
 package com.hz.smsgate.business.smpp.handler;
 
 import com.hz.smsgate.base.constants.SmppServerConstants;
-import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.constants.SmppConstants;
 import com.hz.smsgate.base.smpp.exception.RecoverablePduException;
 import com.hz.smsgate.base.smpp.exception.UnrecoverablePduException;
 import com.hz.smsgate.base.smpp.pdu.*;
-import com.hz.smsgate.base.smpp.pojo.Address;
-import com.hz.smsgate.base.smpp.pojo.PduAsyncResponse;
-import com.hz.smsgate.base.smpp.pojo.SessionKey;
-import com.hz.smsgate.base.smpp.pojo.SmppSession;
+import com.hz.smsgate.base.smpp.pojo.*;
 import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.base.utils.RedisUtil;
 import com.hz.smsgate.base.utils.SmppUtils;
 import com.hz.smsgate.business.listener.SmppServerInit;
 import com.hz.smsgate.business.pojo.MsgVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
+import com.hz.smsgate.business.service.SmppService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +39,8 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 	public RedisUtil redisUtil;
 
 	public static ServerSmppSessionCmHandler serverSmppSessionCmHandler;
+
+
 
 	@PostConstruct
 	public void init() {
@@ -109,7 +108,10 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 					try {
 						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgVo);
+						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, msgid, msgVo);
 						putSelfQueue(submitSm);
+
+
 					} catch (Exception e) {
 						logger.error("-----------短短信下行接收，加入队列异常。------------- ", e);
 					}
@@ -260,8 +262,9 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 			//没有分类的 放到营销短信中去
 		} else {
 			serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.CM_SUBMIT_SM_YX, submitSm);
-
 		}
+
+		serverSmppSessionCmHandler.redisUtil.lPush(SmppServerConstants.BACK_SUBMIT_SM, submitSm);
 
 	}
 

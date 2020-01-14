@@ -28,10 +28,25 @@ public class SmppServerConstants {
 	 */
 	public static final String CM_SUBMIT_SM_YX = "cmYxSubmitSm";
 
+	/**
+	 * 短信下行  详情记录
+	 */
+	public static final String BACK_SUBMIT_SM = "backSubmitSm";
+
+	/**
+	 * msgid的缓存key
+	 */
+	public static final String BACK_MSGID_CACHE = "backMsgIdCache";
+
 
 	/**
 	 *CM 状态报告缓存key
 	 */
 	public static final String CM_DELIVER_SM = "cmDeliverSm";
+
+	/**
+	 * 同步请求到网关
+	 */
+	public static final String SYNC_SUBMIT = "syncSubmit";
 
 }

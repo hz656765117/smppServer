@@ -2,6 +2,7 @@ package com.hz.smsgate.business.listener;
 
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.constants.SystemGlobals;
+import com.hz.smsgate.base.emp.pojo.WGParams;
 import com.hz.smsgate.base.smpp.config.SmppServerConfiguration;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.utils.PropertiesLoader;
@@ -51,6 +52,8 @@ public class SmppServerInit {
 	public static List<SessionKey> CHANNEL_MK_LIST = new ArrayList<>();
 
 
+	public static Map<SessionKey, WGParams> CHANNL_SP_REL = new LinkedHashMap<>();
+
 	/**
 	 * opt通道
 	 */
@@ -78,6 +81,8 @@ public class SmppServerInit {
 
 		initChannels();
 
+		initSpList();
+
 		//启动相关线程
 		initMutiThread();
 
@@ -96,6 +101,37 @@ public class SmppServerInit {
 			map.put(operatorVo.getChannel(), sessionKey);
 		}
 		CHANNL_REL = map;
+	}
+
+	public void initSpList() {
+		List<SmppUserVo> allSmppUser = smppService.getAllSmppUser();
+		if (allSmppUser == null || allSmppUser.size() <= 0) {
+			logger.error("未加载到sp账号");
+			return;
+		}
+
+		Map<SessionKey, WGParams> configMap = new LinkedHashMap<>(allSmppUser.size());
+		WGParams wgParams;
+		SessionKey sessionKey;
+		for (SmppUserVo smppUserVo : allSmppUser) {
+			try {
+
+				sessionKey = new SessionKey();
+				sessionKey.setSenderId(smppUserVo.getSmppPwd());
+				sessionKey.setSystemId(smppUserVo.getSmppUser());
+
+				wgParams = new WGParams();
+				wgParams.setSpid(smppUserVo.getSpUser());
+				wgParams.setSppassword(smppUserVo.getSpPwd());
+
+				configMap.put(sessionKey, wgParams);
+			} catch (Exception e) {
+				logger.error("sp账号解析异常！,过滤该配置", e);
+				continue;
+			}
+		}
+		CHANNL_SP_REL.clear();
+		CHANNL_SP_REL = configMap;
 	}
 
 

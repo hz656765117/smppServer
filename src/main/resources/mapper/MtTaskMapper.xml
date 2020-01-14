@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hz.smsgate.business.mybatis.mapper.MtTaskMapper">
+  <resultMap id="BaseResultMap" type="com.hz.smsgate.business.pojo.MtTask">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sp_msg_id" jdbcType="VARCHAR" property="spMsgId" />
+    <result column="real_msg_id" jdbcType="VARCHAR" property="realMsgId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="system_id" jdbcType="VARCHAR" property="systemId" />
+    <result column="channel" jdbcType="VARCHAR" property="channel" />
+    <result column="sender_id" jdbcType="VARCHAR" property="senderId" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+    <result column="send_type" jdbcType="INTEGER" property="sendType" />
+    <result column="send_level" jdbcType="INTEGER" property="sendLevel" />
+    <result column="send_flag" jdbcType="INTEGER" property="sendFlag" />
+    <result column="receive_flag" jdbcType="INTEGER" property="receiveFlag" />
+    <result column="error_code" jdbcType="VARCHAR" property="errorCode" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
+    <result column="task_id" jdbcType="VARCHAR" property="taskId" />
+    <result column="long_msg_seq" jdbcType="INTEGER" property="longMsgSeq" />
+    <result column="tp_udhi" jdbcType="INTEGER" property="tpUdhi" />
+    <result column="tp_pid" jdbcType="INTEGER" property="tpPid" />
+    <result column="area_code" jdbcType="VARCHAR" property="areaCode" />
+    <result column="num_seg" jdbcType="VARCHAR" property="numSeg" />
+    <result column="pk_number" jdbcType="INTEGER" property="pkNumber" />
+    <result column="pk_total" jdbcType="INTEGER" property="pkTotal" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, sp_msg_id, real_msg_id, user_id, system_id, channel, sender_id, phone, message, 
+    send_type, send_level, send_flag, receive_flag, error_code, send_time, receive_time, 
+    task_id, long_msg_seq, tp_udhi, tp_pid, area_code, num_seg, pk_number, pk_total
+  </sql>
+  <select id="selectByExample" parameterType="com.hz.smsgate.business.pojo.MtTaskExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from ${tableName}
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ${tableName}
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ${tableName}
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hz.smsgate.business.pojo.MtTaskExample">
+    delete from ${tableName}
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hz.smsgate.business.pojo.MtTask">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ${tableName} (sp_msg_id, real_msg_id, user_id, 
+      system_id, channel, sender_id, 
+      phone, message, send_type, 
+      send_level, send_flag, receive_flag, 
+      error_code, send_time, receive_time, 
+      task_id, long_msg_seq, tp_udhi, 
+      tp_pid, area_code, num_seg, 
+      pk_number, pk_total)
+    values (#{spMsgId,jdbcType=VARCHAR}, #{realMsgId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+      #{systemId,jdbcType=VARCHAR}, #{channel,jdbcType=VARCHAR}, #{senderId,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{message,jdbcType=VARCHAR}, #{sendType,jdbcType=INTEGER}, 
+      #{sendLevel,jdbcType=INTEGER}, #{sendFlag,jdbcType=INTEGER}, #{receiveFlag,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{receiveTime,jdbcType=TIMESTAMP}, 
+      #{taskId,jdbcType=VARCHAR}, #{longMsgSeq,jdbcType=INTEGER}, #{tpUdhi,jdbcType=INTEGER}, 
+      #{tpPid,jdbcType=INTEGER}, #{areaCode,jdbcType=VARCHAR}, #{numSeg,jdbcType=VARCHAR}, 
+      #{pkNumber,jdbcType=INTEGER}, #{pkTotal,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hz.smsgate.business.pojo.MtTask">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ${tableName}
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="spMsgId != null">
+        sp_msg_id,
+      </if>
+      <if test="realMsgId != null">
+        real_msg_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="systemId != null">
+        system_id,
+      </if>
+      <if test="channel != null">
+        channel,
+      </if>
+      <if test="senderId != null">
+        sender_id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="message != null">
+        message,
+      </if>
+      <if test="sendType != null">
+        send_type,
+      </if>
+      <if test="sendLevel != null">
+        send_level,
+      </if>
+      <if test="sendFlag != null">
+        send_flag,
+      </if>
+      <if test="receiveFlag != null">
+        receive_flag,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="sendTime != null">
+        send_time,
+      </if>
+      <if test="receiveTime != null">
+        receive_time,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="longMsgSeq != null">
+        long_msg_seq,
+      </if>
+      <if test="tpUdhi != null">
+        tp_udhi,
+      </if>
+      <if test="tpPid != null">
+        tp_pid,
+      </if>
+      <if test="areaCode != null">
+        area_code,
+      </if>
+      <if test="numSeg != null">
+        num_seg,
+      </if>
+      <if test="pkNumber != null">
+        pk_number,
+      </if>
+      <if test="pkTotal != null">
+        pk_total,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="spMsgId != null">
+        #{spMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="realMsgId != null">
+        #{realMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="systemId != null">
+        #{systemId,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null">
+        #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="senderId != null">
+        #{senderId,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="sendType != null">
+        #{sendType,jdbcType=INTEGER},
+      </if>
+      <if test="sendLevel != null">
+        #{sendLevel,jdbcType=INTEGER},
+      </if>
+      <if test="sendFlag != null">
+        #{sendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="receiveFlag != null">
+        #{receiveFlag,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null">
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveTime != null">
+        #{receiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="longMsgSeq != null">
+        #{longMsgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="tpUdhi != null">
+        #{tpUdhi,jdbcType=INTEGER},
+      </if>
+      <if test="tpPid != null">
+        #{tpPid,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null">
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="numSeg != null">
+        #{numSeg,jdbcType=VARCHAR},
+      </if>
+      <if test="pkNumber != null">
+        #{pkNumber,jdbcType=INTEGER},
+      </if>
+      <if test="pkTotal != null">
+        #{pkTotal,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hz.smsgate.business.pojo.MtTaskExample" resultType="java.lang.Long">
+    select count(*) from ${tableName}
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ${tableName}
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.spMsgId != null">
+        sp_msg_id = #{record.spMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.realMsgId != null">
+        real_msg_id = #{record.realMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.systemId != null">
+        system_id = #{record.systemId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.channel != null">
+        channel = #{record.channel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.senderId != null">
+        sender_id = #{record.senderId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.message != null">
+        message = #{record.message,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sendType != null">
+        send_type = #{record.sendType,jdbcType=INTEGER},
+      </if>
+      <if test="record.sendLevel != null">
+        send_level = #{record.sendLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.sendFlag != null">
+        send_flag = #{record.sendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.receiveFlag != null">
+        receive_flag = #{record.receiveFlag,jdbcType=INTEGER},
+      </if>
+      <if test="record.errorCode != null">
+        error_code = #{record.errorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sendTime != null">
+        send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.receiveTime != null">
+        receive_time = #{record.receiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.taskId != null">
+        task_id = #{record.taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.longMsgSeq != null">
+        long_msg_seq = #{record.longMsgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="record.tpUdhi != null">
+        tp_udhi = #{record.tpUdhi,jdbcType=INTEGER},
+      </if>
+      <if test="record.tpPid != null">
+        tp_pid = #{record.tpPid,jdbcType=INTEGER},
+      </if>
+      <if test="record.areaCode != null">
+        area_code = #{record.areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.numSeg != null">
+        num_seg = #{record.numSeg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pkNumber != null">
+        pk_number = #{record.pkNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.pkTotal != null">
+        pk_total = #{record.pkTotal,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ${tableName}
+    set id = #{record.id,jdbcType=INTEGER},
+      sp_msg_id = #{record.spMsgId,jdbcType=VARCHAR},
+      real_msg_id = #{record.realMsgId,jdbcType=VARCHAR},
+      user_id = #{record.userId,jdbcType=VARCHAR},
+      system_id = #{record.systemId,jdbcType=VARCHAR},
+      channel = #{record.channel,jdbcType=VARCHAR},
+      sender_id = #{record.senderId,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      message = #{record.message,jdbcType=VARCHAR},
+      send_type = #{record.sendType,jdbcType=INTEGER},
+      send_level = #{record.sendLevel,jdbcType=INTEGER},
+      send_flag = #{record.sendFlag,jdbcType=INTEGER},
+      receive_flag = #{record.receiveFlag,jdbcType=INTEGER},
+      error_code = #{record.errorCode,jdbcType=VARCHAR},
+      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      receive_time = #{record.receiveTime,jdbcType=TIMESTAMP},
+      task_id = #{record.taskId,jdbcType=VARCHAR},
+      long_msg_seq = #{record.longMsgSeq,jdbcType=INTEGER},
+      tp_udhi = #{record.tpUdhi,jdbcType=INTEGER},
+      tp_pid = #{record.tpPid,jdbcType=INTEGER},
+      area_code = #{record.areaCode,jdbcType=VARCHAR},
+      num_seg = #{record.numSeg,jdbcType=VARCHAR},
+      pk_number = #{record.pkNumber,jdbcType=INTEGER},
+      pk_total = #{record.pkTotal,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hz.smsgate.business.pojo.MtTask">
+    update ${tableName}
+    <set>
+      <if test="spMsgId != null">
+        sp_msg_id = #{spMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="realMsgId != null">
+        real_msg_id = #{realMsgId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="systemId != null">
+        system_id = #{systemId,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null">
+        channel = #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="senderId != null">
+        sender_id = #{senderId,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="message != null">
+        message = #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="sendType != null">
+        send_type = #{sendType,jdbcType=INTEGER},
+      </if>
+      <if test="sendLevel != null">
+        send_level = #{sendLevel,jdbcType=INTEGER},
+      </if>
+      <if test="sendFlag != null">
+        send_flag = #{sendFlag,jdbcType=INTEGER},
+      </if>
+      <if test="receiveFlag != null">
+        receive_flag = #{receiveFlag,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null">
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveTime != null">
+        receive_time = #{receiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="longMsgSeq != null">
+        long_msg_seq = #{longMsgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="tpUdhi != null">
+        tp_udhi = #{tpUdhi,jdbcType=INTEGER},
+      </if>
+      <if test="tpPid != null">
+        tp_pid = #{tpPid,jdbcType=INTEGER},
+      </if>
+      <if test="areaCode != null">
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="numSeg != null">
+        num_seg = #{numSeg,jdbcType=VARCHAR},
+      </if>
+      <if test="pkNumber != null">
+        pk_number = #{pkNumber,jdbcType=INTEGER},
+      </if>
+      <if test="pkTotal != null">
+        pk_total = #{pkTotal,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hz.smsgate.business.pojo.MtTask">
+    update ${tableName}
+    set sp_msg_id = #{spMsgId,jdbcType=VARCHAR},
+      real_msg_id = #{realMsgId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      system_id = #{systemId,jdbcType=VARCHAR},
+      channel = #{channel,jdbcType=VARCHAR},
+      sender_id = #{senderId,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      message = #{message,jdbcType=VARCHAR},
+      send_type = #{sendType,jdbcType=INTEGER},
+      send_level = #{sendLevel,jdbcType=INTEGER},
+      send_flag = #{sendFlag,jdbcType=INTEGER},
+      receive_flag = #{receiveFlag,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=VARCHAR},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      receive_time = #{receiveTime,jdbcType=TIMESTAMP},
+      task_id = #{taskId,jdbcType=VARCHAR},
+      long_msg_seq = #{longMsgSeq,jdbcType=INTEGER},
+      tp_udhi = #{tpUdhi,jdbcType=INTEGER},
+      tp_pid = #{tpPid,jdbcType=INTEGER},
+      area_code = #{areaCode,jdbcType=VARCHAR},
+      num_seg = #{numSeg,jdbcType=VARCHAR},
+      pk_number = #{pkNumber,jdbcType=INTEGER},
+      pk_total = #{pkTotal,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

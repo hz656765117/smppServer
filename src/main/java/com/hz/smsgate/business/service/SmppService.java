@@ -1,6 +1,7 @@
 package com.hz.smsgate.business.service;
 
 
+import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.business.pojo.Channel;
 import com.hz.smsgate.business.pojo.OperatorVo;
 import com.hz.smsgate.business.pojo.SmppUserVo;
@@ -16,5 +17,7 @@ public interface SmppService {
     List<SmppUserVo> getAllSmppUser();
 
     List<OperatorVo> getAllOperator();
+
+    boolean insertMtTask(SubmitSm submitSm);
 
 }
