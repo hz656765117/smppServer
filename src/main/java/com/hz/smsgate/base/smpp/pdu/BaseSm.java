@@ -58,6 +58,9 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
 
 	public String tempMsgId;
 	public String systemId;
+	public String channel;
+	public String smppUser;
+	public int  userType;
 
 
 	public BaseSm(int commandId, String name) {
@@ -190,6 +193,30 @@ public abstract class BaseSm<R extends PduResponse> extends PduRequest<R> implem
 
 	public void setSystemId(String systemId) {
 		this.systemId = systemId;
+	}
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public String getSmppUser() {
+		return smppUser;
+	}
+
+	public void setSmppUser(String smppUser) {
+		this.smppUser = smppUser;
+	}
+
+	public int getUserType() {
+		return userType;
+	}
+
+	public void setUserType(int userType) {
+		this.userType = userType;
 	}
 
 	@Override
