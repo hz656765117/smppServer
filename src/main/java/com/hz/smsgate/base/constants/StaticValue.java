@@ -1,16 +1,6 @@
 package com.hz.smsgate.base.constants;
 
 
-import com.hz.smsgate.base.emp.pojo.WGParams;
-import com.hz.smsgate.base.smpp.pojo.SessionKey;
-import com.hz.smsgate.base.utils.FileUtils;
-import com.hz.smsgate.business.pojo.SmppUserVo;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author huangzhuo
  * @date 2019/9/2 15:51
