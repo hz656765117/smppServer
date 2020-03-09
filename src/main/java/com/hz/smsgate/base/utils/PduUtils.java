@@ -73,7 +73,7 @@ public class PduUtils {
 		if (mbl.startsWith("00")) {
 			numSeg = mbl.substring(0, 7);
 		} else {
-			numSeg = 00 + mbl.substring(0, 5);
+			numSeg = "00" + mbl.substring(0, 5);
 		}
 		return numSeg;
 	}
