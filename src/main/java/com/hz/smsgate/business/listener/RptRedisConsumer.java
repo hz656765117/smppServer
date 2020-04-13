@@ -177,6 +177,11 @@ public class RptRedisConsumer implements Runnable {
 
 //				smppSession.sendRequestPdu(deliverSm, 10000, true);
 
+
+				if (smppSession.getConfiguration().getSystemId() != "CM0001" && smppSession.getConfiguration().getSystemId() != "CM0002") {
+					smppSession.sendRequestPdu(deliverSm, 10000, true);
+				}
+
 			} catch (Exception e) {
 				LOGGER.error("{}-处理短信状态报告转发异常", Thread.currentThread().getName(), e);
 			}
