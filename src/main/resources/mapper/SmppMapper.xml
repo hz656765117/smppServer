@@ -22,8 +22,9 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
         <result column="channel" jdbcType="VARCHAR" property="channel" />
         <result column="senderid" jdbcType="VARCHAR" property="senderid" />
+        <result column="smpp_channel" jdbcType="VARCHAR" property="smppChannel" />
+        <result column="son_smpp_users" jdbcType="VARCHAR" property="sonSmppUsers" />
     </resultMap>
-
 
 
     <select id="selectUser"     resultMap="BaseResultMap">
@@ -56,6 +57,40 @@
                 #{item, jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="userType != null">
+            and su.user_type =  #{userType, jdbcType=INTEGER}
+        </if>
+    </select>
+
+
+    <select id="selectFatherUser"     resultMap="BaseResultMap">
+
+        SELECT
+        su.id,
+        su.sp_user,
+        su.sp_pwd,
+        su.systemId  s_user,
+        su.password  s_pwd,
+        su.area_code,
+        su.msg_type,
+        su.user_ids,
+        sc.channel smpp_channel,
+        sc.son_smpp_users,
+        su.num_segment,
+        su.user_type,
+        su.desc,
+        op.systemid,
+        ch.senderid,
+        ch.channel
+        FROM
+        t_smpp_user su
+        LEFT JOIN t_sys_chanel_ref ref ON su.sys_channel_id = ref.id
+        LEFT JOIN t_channel ch ON ref.channel_id = ch.id
+        LEFT JOIN t_operator op ON ref.sys_id = op.id
+        LEFT JOIN t_smpp_channel_ref scr ON scr.smpp_user_id = su.id
+        LEFT JOIN t_smpp_channel sc ON scr.channel_id = sc.id
+        WHERE
+        su.flag = 0
         <if test="userType != null">
             and su.user_type =  #{userType, jdbcType=INTEGER}
         </if>

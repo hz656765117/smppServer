@@ -23,60 +23,56 @@ import java.util.stream.Collectors;
 @Service
 public class SmppServiceImpl implements SmppService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SmppServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SmppServiceImpl.class);
 
-	@Autowired
-	private ChannelMapper channelMapper;
-
-
-	@Autowired
-	private SmppMapper smppMapper;
-
-	@Autowired
-	private MtTaskMapper mtTaskMapper;
+    @Autowired
+    private ChannelMapper channelMapper;
 
 
+    @Autowired
+    private SmppMapper smppMapper;
+
+    @Autowired
+    private MtTaskMapper mtTaskMapper;
 
 
-	@Override
-	public List<Channel> getAllChannels() {
-		ChannelExample example = new ChannelExample();
-		example.createCriteria().andSenderidIsNotNull();
-		List<Channel> channels = channelMapper.selectByExample(example);
-		return channels;
-	}
+    @Override
+    public List<Channel> getAllChannels() {
+        ChannelExample example = new ChannelExample();
+        example.createCriteria().andSenderidIsNotNull();
+        List<Channel> channels = channelMapper.selectByExample(example);
+        return channels;
+    }
 
-	@Override
-	public List<SmppUserVo> getAllSmppUser() {
+    @Override
+    public List<SmppUserVo> getAllSmppUser() {
 
-		List<SmppUserVo> smppUserVos = smppMapper.selectUser(null, 0);
-
-
-		if (smppUserVos != null && smppUserVos.size() > 0) {
-			List<SmppUserVo> list;
-			for (SmppUserVo smppUserVo : smppUserVos) {
-				String userIds = smppUserVo.getUserIds();
-				if (StringUtils.isNotBlank(userIds)) {
-					List<Integer> listIds = Arrays.asList(userIds.split(",")).stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
-					list = smppMapper.selectUser(listIds, 0);
-					smppUserVo.setSenderid(smppUserVo.getDesc());
-					smppUserVo.setChannel(smppUserVo.getDesc());
-					smppUserVo.setSystemid(smppUserVo.getSmppUser());
-					smppUserVo.setList(list);
-				}
-			}
-		}
-
-		return smppUserVos;
-	}
-
-	@Override
-	public List<OperatorVo> getAllOperator() {
-		List<OperatorVo> operatorVos = smppMapper.selectOperator();
-		return operatorVos;
-	}
+        List<SmppUserVo> smppUserVos = smppMapper.selectFatherUser(0);
 
 
+        if (smppUserVos != null && smppUserVos.size() > 0) {
+            List<SmppUserVo> list;
+            for (SmppUserVo smppUserVo : smppUserVos) {
+                String userIds = smppUserVo.getSonSmppUsers();
+                if (StringUtils.isNotBlank(userIds)) {
+                    List<Integer> listIds = Arrays.asList(userIds.split(",")).stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
+                    list = smppMapper.selectUser(listIds, 0);
+                    smppUserVo.setSenderid(smppUserVo.getSmppChannel());
+                    smppUserVo.setChannel(smppUserVo.getSmppChannel());
+                    smppUserVo.setSystemid(smppUserVo.getSmppUser());
+                    smppUserVo.setList(list);
+                }
+            }
+        }
+
+        return smppUserVos;
+    }
+
+    @Override
+    public List<OperatorVo> getAllOperator() {
+        List<OperatorVo> operatorVos = smppMapper.selectOperator();
+        return operatorVos;
+    }
 
 
 }

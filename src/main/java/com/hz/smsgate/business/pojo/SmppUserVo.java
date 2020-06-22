@@ -1,5 +1,7 @@
 package com.hz.smsgate.business.pojo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -117,6 +119,14 @@ public class SmppUserVo implements Serializable {
      * 创建时间
      */
     private Date updateTime;
+
+
+
+    private String smppChannel;
+
+
+    private String sonSmppUsers;
+
 
 
     List<SmppUserVo> list;
@@ -371,5 +381,28 @@ public class SmppUserVo implements Serializable {
 
     public void setNumSegment(String numSegment) {
         this.numSegment = numSegment;
+    }
+
+
+    public String getSmppChannel() {
+        if(StringUtils.isBlank(smppChannel)){
+            smppChannel = desc;
+        }
+        return smppChannel;
+    }
+
+    public void setSmppChannel(String smppChannel) {
+        this.smppChannel = smppChannel;
+    }
+
+    public String getSonSmppUsers() {
+        if(StringUtils.isBlank(sonSmppUsers)){
+            sonSmppUsers = userIds;
+        }
+        return sonSmppUsers;
+    }
+
+    public void setSonSmppUsers(String sonSmppUsers) {
+        this.sonSmppUsers = sonSmppUsers;
     }
 }

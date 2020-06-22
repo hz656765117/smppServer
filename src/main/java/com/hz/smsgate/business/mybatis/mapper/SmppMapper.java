@@ -13,6 +13,9 @@ public interface SmppMapper {
 
     List<SmppUserVo> selectUser(@Param("list") List<Integer> ids,@Param("userType") Integer userType);
 
+
+    List<SmppUserVo> selectFatherUser(@Param("userType") Integer userType);
+
     List<OperatorVo> selectOperator();
 
 
