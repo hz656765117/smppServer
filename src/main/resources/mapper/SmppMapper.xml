@@ -57,9 +57,9 @@
                 #{item, jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="userType != null">
+        <!--<if test="userType != null">
             and su.user_type =  #{userType, jdbcType=INTEGER}
-        </if>
+        </if>-->
     </select>
 
 
