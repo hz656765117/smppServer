@@ -31,34 +31,38 @@ public class SmsController {
     public RedisUtil redisUtil;
 
     @RequestMapping(value = "/sms/rsend.hts")
-    public String demoTest(String command, String spid, String pwd, String das, String sm, String custid) {
+    public String msgSend(String command, String spid, String pwd, String das, String sm, String custid) {
         LOGGER.info("command:{},spid:{},pwd:{},das:{},sm:{},custid:{}", command, spid, pwd, das, sm, custid);
         String mtStat = "ACCEPTD";
         String mtErrCode = "0";
+        try {
+            sm = ChangeCharset.toStringHex(sm);
+        }catch (Exception e){
+            LOGGER.error("短信内容解码异常{}",e);
+        }
 
-        sm = ChangeCharset.toStringHex(sm);
 
-        LOGGER.info("{}-解码后的短信内容为{}",das,sm);
+        LOGGER.info("{}-解码后的短信内容为{}", das, sm);
 
         String[] mbls = das.split(",");
 
-        if(StringUtils.isBlank(command) || !"MT_REQUEST".equalsIgnoreCase(command) ){
+        if (StringUtils.isBlank(command) || !"MT_REQUEST".equalsIgnoreCase(command)) {
             mtErrCode = "-13";
             mtStat = "REJECTD";
         }
 
-        if(StringUtils.isBlank(spid) || StringUtils.isBlank(pwd)  ){
+        if (StringUtils.isBlank(spid) || StringUtils.isBlank(pwd)) {
             mtErrCode = "-100";
             mtStat = "REJECTD";
         }
 
-        if( StringUtils.isBlank(das)){
+        if (StringUtils.isBlank(das)) {
             mtErrCode = "-4";
             mtStat = "REJECTD";
         }
 
 
-        if(StringUtils.isBlank(sm)){
+        if (StringUtils.isBlank(sm)) {
             mtErrCode = "-5";
             mtStat = "REJECTD";
         }
@@ -69,51 +73,179 @@ public class SmsController {
         }
 
         SmppUserVo smppUserByUserPwd = PduUtils.getSmppUserByUserPwd(spid, pwd);
-        if(smppUserByUserPwd == null){
+        if (smppUserByUserPwd == null) {
             mtErrCode = "-1";
             mtStat = "REJECTD";
         }
 
 
+        String msgids = "";
+        if (mtErrCode.equalsIgnoreCase("0")) {
+            for (String mbl : mbls) {
+                SubmitSm submitSm = new SubmitSm();
+
+                try {
+                    submitSm.setRegisteredDelivery((byte) 1);
+
+                    submitSm.setSmppUser(spid);
+                    submitSm.setUserType(0);
+
+                    submitSm.setSourceAddress(new Address((byte) 0x00, (byte) 0x01, "000"));
+                    submitSm.setDestAddress(new Address((byte) 0x01, (byte) 0x01, mbl));
+
+                    String msgid = SmppUtils.getMsgId();
+                    msgids += msgid + ",";
+                    submitSm.setTempMsgId(msgid);
+
+
+                    if (isContainChinese(sm)) {
+                        submitSm.setShortMessage(sm.getBytes("UTF-16BE"));
+                        submitSm.setDataCoding(SmppConstants.DATA_CODING_UCS2);
+                    }else {
+                        submitSm.setShortMessage(sm.getBytes());
+                    }
+                    submitSm = getRealSubmitSm(submitSm, smppUserByUserPwd);
+
+                    submitSm.calculateAndSetCommandLength();
+
+                    MsgVo msgVo = new MsgVo(msgid, spid, pwd, submitSm.getSourceAddress().getAddress());
+
+
+                    redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgVo);
+                    redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, msgid, msgVo);
+                    putSelfQueue(submitSm);
+                } catch (Exception e) {
+                    LOGGER.error("{}-{}下行请求异常", mbl, sm, e);
+                }
+            }
+            msgids = msgids.substring(0, msgids.length() - 1);
+        }
+
+        String result = "command=MT_RESPONSE&spid=" + spid + "&msgid=" + msgids + "&mtstat=" + mtStat + "&status=" + mtErrCode + "";
+        LOGGER.info(result);
+        return result;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @RequestMapping(value = "/test/sms/rsend.hts")
+    public String test(String command, String spid, String pwd, String das, String sm, String custid) {
+        LOGGER.info("command:{},spid:{},pwd:{},das:{},sm:{},custid:{}", command, spid, pwd, das, sm, custid);
+        String mtStat = "ACCEPTD";
+        String mtErrCode = "0";
+        try {
+            sm = ChangeCharset.toStringHex(sm);
+        }catch (Exception e){
+            LOGGER.error("短信内容解码异常{}",e);
+        }
+
+
+        LOGGER.info("{}-解码后的短信内容为{}", das, sm);
+
+        String[] mbls = das.split(",");
+
+        if (StringUtils.isBlank(command) || !"MT_REQUEST".equalsIgnoreCase(command)) {
+            mtErrCode = "-13";
+            mtStat = "REJECTD";
+        }
+
+        if (StringUtils.isBlank(spid) || StringUtils.isBlank(pwd)) {
+            mtErrCode = "-100";
+            mtStat = "REJECTD";
+        }
+
+        if (StringUtils.isBlank(das)) {
+            mtErrCode = "-4";
+            mtStat = "REJECTD";
+        }
+
+
+        if (StringUtils.isBlank(sm)) {
+            mtErrCode = "-5";
+            mtStat = "REJECTD";
+        }
+
+        if (mbls != null && mbls.length > 100) {
+            mtErrCode = "-2";
+            mtStat = "REJECTD";
+        }
+
+        SmppUserVo smppUserByUserPwd = PduUtils.getSmppUserByUserPwd(spid, pwd);
+        if (smppUserByUserPwd == null) {
+            mtErrCode = "-1";
+            mtStat = "REJECTD";
+        }
+
 
         String msgids = "";
+        if (mtErrCode.equalsIgnoreCase("0")) {
+            for (String mbl : mbls) {
+                SubmitSm submitSm = new SubmitSm();
 
-        for (String mbl : mbls) {
-            SubmitSm submitSm = new SubmitSm();
+                try {
+                    submitSm.setRegisteredDelivery((byte) 1);
 
-            try {
-                submitSm.setRegisteredDelivery((byte) 1);
-                submitSm.setShortMessage(sm.getBytes());
-                submitSm.setSmppUser(spid);
-                submitSm.setUserType(0);
+                    submitSm.setSmppUser(spid);
+                    submitSm.setUserType(0);
 
-                submitSm.setSourceAddress(new Address((byte) 0x03, (byte) 0x00, "000"));
-                submitSm.setDestAddress(new Address((byte) 0x01, (byte) 0x01, mbl));
+                    submitSm.setSourceAddress(new Address((byte) 0x00, (byte) 0x01, "000"));
+                    submitSm.setDestAddress(new Address((byte) 0x01, (byte) 0x01, mbl));
 
-                String msgid = SmppUtils.getMsgId();
-                msgids += msgid+",";
-                submitSm.setTempMsgId(msgid);
-
-
-                submitSm = getRealSubmitSm(submitSm, smppUserByUserPwd);
-
-                setDataCoding(submitSm);
-
-                MsgVo msgVo = new MsgVo(msgid, spid, pwd, submitSm.getSourceAddress().getAddress());
+                    String msgid = SmppUtils.getMsgId();
+                    msgids += msgid + ",";
+                    submitSm.setTempMsgId(msgid);
 
 
-                redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgVo);
-                redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, msgid, msgVo);
-                putSelfQueue(submitSm);
-            } catch (Exception e) {
+                    if (isContainChinese(sm)) {
+                        submitSm.setShortMessage(sm.getBytes("UTF-16BE"));
+                        submitSm.setDataCoding(SmppConstants.DATA_CODING_UCS2);
+                    }else {
+                        submitSm.setShortMessage(sm.getBytes());
+                    }
+                    submitSm = getRealSubmitSm(submitSm, smppUserByUserPwd);
 
+                    submitSm.calculateAndSetCommandLength();
+
+                    MsgVo msgVo = new MsgVo(msgid, spid, pwd, submitSm.getSourceAddress().getAddress());
+
+
+                    redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgVo);
+                    redisUtil.hmSet(SmppServerConstants.BACK_MSGID_CACHE, msgid, msgVo);
+                    putSelfQueue(submitSm);
+                } catch (Exception e) {
+                    LOGGER.error("{}-{}下行请求异常", mbl, sm, e);
+                }
             }
-
+            msgids = msgids.substring(0, msgids.length() - 1);
         }
-        String result = "command=MT_RESPONSE&spid="+spid+"&msgid="+msgids.substring(0,msgids.length()-1)+"&mtstat="+mtStat+"&status="+mtErrCode+"";
+
+        String result = "command=MT_RESPONSE&spid=" + spid + "&msgid=" + msgids + "&mtstat=" + mtStat + "&status=" + mtErrCode + "";
         LOGGER.info(result);
-        return  result;
+        return result;
     }
+
+
+
+
+
+
+
 
 
 
@@ -245,6 +377,9 @@ public class SmsController {
         }
         return sm;
     }
+
+
+
 
     /**
      * 判断字符串中是否包含中文
