@@ -134,7 +134,7 @@ public class PduUtils {
             SmppUserVo smppUserVo = getSmppUserByUserPwd(smppUser, smppPwd);
 
             if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
-                LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser(),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser({}),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
                 return smppSession;
             }
 
@@ -142,7 +142,7 @@ public class PduUtils {
 
 
             if (smppSession == null) {
-                LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser(),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser({}),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
             }
         } catch (Exception e) {
             LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(smppUser({}),smppPwd({}))-------", Thread.currentThread().getName(), smppUser, smppPwd, e);
@@ -158,6 +158,10 @@ public class PduUtils {
         }
         SmppSession smppSession = null;
         for (SmppSession session : DefaultSmppServer.smppSessionList) {
+            if(StringUtils.isBlank(session.getConfiguration().getSystemId())||StringUtils.isBlank(session.getConfiguration().getPassword())){
+                LOGGER.error("客户端连接异常systemid:{},password:{}",session.getConfiguration().getSystemId(),session.getConfiguration().getPassword());
+                continue;
+            }
             if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd())) {
                 smppSession = session;
                 break;

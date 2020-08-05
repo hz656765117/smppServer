@@ -83,6 +83,8 @@ public class SmppServerInit {
 
 		initSpList();
 
+		initYxj();
+
 		//启动相关线程
 		initMutiThread();
 
