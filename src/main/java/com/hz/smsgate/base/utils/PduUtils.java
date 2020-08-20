@@ -1,6 +1,9 @@
 package com.hz.smsgate.base.utils;
 
+import com.cloudhopper.commons.charset.CharsetUtil;
+import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
+import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.business.listener.SmppServerInit;
@@ -158,8 +161,8 @@ public class PduUtils {
         }
         SmppSession smppSession = null;
         for (SmppSession session : DefaultSmppServer.smppSessionList) {
-            if(StringUtils.isBlank(session.getConfiguration().getSystemId())||StringUtils.isBlank(session.getConfiguration().getPassword())){
-                LOGGER.error("客户端连接异常systemid:{},password:{}",session.getConfiguration().getSystemId(),session.getConfiguration().getPassword());
+            if (StringUtils.isBlank(session.getConfiguration().getSystemId()) || StringUtils.isBlank(session.getConfiguration().getPassword())) {
+                LOGGER.error("客户端连接异常systemid:{},password:{}", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
                 continue;
             }
             if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd())) {
@@ -168,6 +171,47 @@ public class PduUtils {
             }
         }
         return smppSession;
+    }
+
+
+    public static SubmitSm encodeCmGsm(SubmitSm sm) {
+        String systemId = sm.getSystemId();
+
+        String mbl = sm.getDestAddress().getAddress();
+        String areaCode = PduUtils.getAreaCode(mbl);
+
+        //cm资源需要GSM格式编码
+        if ((systemId.toUpperCase().startsWith("HP") && areaCode.equals("62")) || StaticValue.SYSTEMID_ALEX.equals(systemId)) {
+            onlyEncodeGsm(sm);
+        }
+        return sm;
+    }
+
+
+    /**
+     * 短信内容Gsm编码
+     *
+     * @param sm 下行短信对象
+     * @return
+     */
+    public static SubmitSm onlyEncodeGsm(SubmitSm sm) {
+        if (sm.getDataCoding() != 0) {
+            return sm;
+        }
+
+        byte[] shortMessage = sm.getShortMessage();
+        String content = new String(shortMessage);
+        LOGGER.info("短信的内容为{},下行号码为{}，通道为{},datacoding为{}", content, sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress(), sm.getDataCoding());
+        try {
+            byte[] textBytes = CharsetUtil.encode(content, CharsetUtil.CHARSET_GSM);
+            sm.setShortMessage(textBytes);
+        } catch (Exception e) {
+            LOGGER.error("短信内容编码异常", e);
+        }
+        LOGGER.info("短信编码后的内容为{},下行号码为{}，通道为{},datacoding为{}", new String(sm.getShortMessage()), sm.getDestAddress().getAddress(), sm.getSourceAddress().getAddress(), sm.getDataCoding());
+
+        sm.calculateAndSetCommandLength();
+        return sm;
     }
 
 

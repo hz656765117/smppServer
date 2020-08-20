@@ -220,6 +220,9 @@ public class SmsController {
                     }
                     submitSm = getRealSubmitSm(submitSm, smppUserByUserPwd);
 
+                    //短信下行内容编码
+                    submitSm = PduUtils.encodeCmGsm(submitSm);
+
                     submitSm.calculateAndSetCommandLength();
 
                     MsgVo msgVo = new MsgVo(msgid, spid, pwd, submitSm.getSourceAddress().getAddress());
@@ -394,8 +397,13 @@ public class SmsController {
         if (m.find()) {
             return true;
         }
+
+        if(str.contains("【")||str.contains("】")){
+            return true;
+        }
+
+
         return false;
     }
-
 
 }
