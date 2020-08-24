@@ -483,8 +483,9 @@ public class DeliveryReceipt {
 
 		if (checkMissingFields) {
 			if (StringUtil.isEmpty(dlr.messageId)) {
-				throw new DeliveryReceiptException(
-						"Unable to find [id] field or empty value in delivery receipt message");
+//				throw new DeliveryReceiptException(
+//						"Unable to find [id] field or empty value in delivery receipt message");
+				logger.error("Unable to find [id] field or empty value in delivery receipt message");
 			}
 
 			if (dlr.submitCount < 0) {
@@ -513,8 +514,9 @@ public class DeliveryReceipt {
 			}
 
 			if (dlr.state < 0) {
-				throw new DeliveryReceiptException(
-						"Unable to find [stat] field or empty value in delivery receipt message");
+//				throw new DeliveryReceiptException(
+//						"Unable to find [stat] field or empty value in delivery receipt message");
+				logger.error("Unable to find [stat] field or empty value in delivery receipt message");
 			}
 
 			dlr.setErrorCode(000);

@@ -220,6 +220,7 @@ public class SmppServerInit {
 
 		//redis状态报告处理线程
 		ThreadPoolHelper.executeTask(rptRedisConsumer);
+		ThreadPoolHelper.executeTask(rptRedisConsumer);
 
 		ThreadPoolHelper.executeTask(configLoadThread);
 

@@ -1,6 +1,9 @@
 package com.hz.smsgate.base.constants;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author huangzhuo
  * @date 2019/9/2 15:51
@@ -19,6 +22,9 @@ public class StaticValue {
 
 	//心跳频率
 	public static int ENQUIRE_LINK_TIME = 20000;
+
+
+	public static List<String> CHANNEL_JATIS_LIST = new ArrayList<>();
 
 
 //	/**
@@ -121,6 +127,12 @@ public class StaticValue {
 
 
 	static {
+
+
+		CHANNEL_JATIS_LIST.add("testotp");
+		CHANNEL_JATIS_LIST.add("iitsmpp0");
+		CHANNEL_JATIS_LIST.add("iitsmpp1");
+		CHANNEL_JATIS_LIST.add("iitsmpp2");
 
 		TYPE = SystemGlobals.getValue("montnets.type","0");
 
