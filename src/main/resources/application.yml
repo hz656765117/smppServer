@@ -48,7 +48,7 @@ spring:
 #  path: G:/log/
   redis:
     # Redis数据库索引（默认为0）
-    database: 0
+    database: 1
     host: 172.21.3.77
     port: 6379
     password: mwkjhz2019

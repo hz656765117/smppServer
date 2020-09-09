@@ -118,7 +118,7 @@ public class RptRedisConsumer implements Runnable {
             MsgVo msgVo = (MsgVo) obj;
             String preMsgId = msgVo.getMsgId();
 
-            SmppSession smppSession = PduUtils.getServerSmppSession(msgVo.getSmppUser(), msgVo.getSmppPwd());
+            SmppSession smppSession = PduUtils.getServerSmppSession(msgVo.getSmppUser(), msgVo.getSmppPwd(),msgVo.getPort());
             //如果获取不到通道，暂时先丢弃，之后要缓存处理，另起线程重发状态报告
             if (smppSession == null) {
                 return;

@@ -27,6 +27,7 @@ import com.hz.smsgate.base.smpp.exception.SmppProcessingException;
 import com.hz.smsgate.base.smpp.pdu.*;
 import com.hz.smsgate.base.smpp.pojo.LoggingOptions;
 import com.hz.smsgate.base.smpp.pojo.SmppBindType;
+import com.hz.smsgate.base.utils.PduUtils;
 import com.hz.smsgate.business.smpp.channel.ChannelUtil;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
@@ -45,34 +46,34 @@ import java.util.TimerTask;
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 public class UnboundSmppSession implements SmppSessionChannelListener {
-	private static final Logger logger = LoggerFactory.getLogger(UnboundSmppSession.class);
+    private static final Logger logger = LoggerFactory.getLogger(UnboundSmppSession.class);
 
-	// the channel that's not "bound" yet as an SMPP session
-	private final String channelName;
-	private final Channel channel;
-	private final BindTimeoutTask bindTimeoutTask;
-	private final DefaultSmppServer server;
+    // the channel that's not "bound" yet as an SMPP session
+    private final String channelName;
+    private final Channel channel;
+    private final BindTimeoutTask bindTimeoutTask;
+    private final DefaultSmppServer server;
 
-	public UnboundSmppSession(String channelName, Channel channel, DefaultSmppServer server) {
-		this.channelName = channelName;
-		this.channel = channel;
-		this.server = server;
-		// schedule the timer to close the channel after X milliseconds
-		this.bindTimeoutTask = new BindTimeoutTask();
-		this.server.getBindTimer().schedule(bindTimeoutTask, this.server.getConfiguration().getBindTimeout());
-	}
+    public UnboundSmppSession(String channelName, Channel channel, DefaultSmppServer server) {
+        this.channelName = channelName;
+        this.channel = channel;
+        this.server = server;
+        // schedule the timer to close the channel after X milliseconds
+        this.bindTimeoutTask = new BindTimeoutTask();
+        this.server.getBindTimer().schedule(bindTimeoutTask, this.server.getConfiguration().getBindTimeout());
+    }
 
-	// called when a PDU is received and decoded on the channel
-	@Override
-	public void firePduReceived(Pdu pdu) {
-		// always log the PDU received on an unbound session
-		logger.info("received PDU: {}", pdu);
+    // called when a PDU is received and decoded on the channel
+    @Override
+    public void firePduReceived(Pdu pdu) {
+        // always log the PDU received on an unbound session
+        logger.info("received PDU: {}", pdu);
 
-		// only bind and enquire_link requests are permitted
-		if (pdu instanceof BaseBind) {
-			// delegate any bind request to the server handler
-			// variables we track for a successful bind request
-			BaseBind bindRequest = (BaseBind) pdu;
+        // only bind and enquire_link requests are permitted
+        if (pdu instanceof BaseBind) {
+            // delegate any bind request to the server handler
+            // variables we track for a successful bind request
+            BaseBind bindRequest = (BaseBind) pdu;
 //			ClientInit.sessionMap.get()
 
 //			bindRequest.getAddressRange().getAddress();
@@ -94,147 +95,159 @@ public class UnboundSmppSession implements SmppSessionChannelListener {
 //			}
 
 
-			// create a default session configuration based on this bind request
-			SmppSessionConfiguration sessionConfiguration = createSessionConfiguration(bindRequest);
-
-			// assign a new identifier for this session
-			Long sessionId = server.nextSessionId();
-
-			try {
-				// delegate the bind request upstream to server handler
-				this.server.bindRequested(sessionId, sessionConfiguration, bindRequest);
-			} catch (SmppProcessingException e) {
-				logger.warn("Bind request rejected or failed for connection [{}] with error [{}]", channelName, e.getMessage());
+            int maxConnectionSize = server.getConfiguration().getMaxConnectionSize();
+			int countByUserPwd = PduUtils.getCountByUserPwd(bindRequest.getSystemId(), bindRequest.getPassword());
+			if (countByUserPwd > maxConnectionSize) {
 				// create a failed bind response and send back to connection
-				BaseBindResp bindResponse = server.createBindResponse(bindRequest, e.getErrorCode());
+				BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_BINDFAIL);
 				this.sendResponsePdu(bindResponse);
 				// cancel the timer task & close connection
 				closeChannelAndCancelTimer();
 				return;
 			}
 
-			// if we got there then 98% "bound" -- we just need to create the
-			// new session and tie everything together -- cancel the bind timer
-			this.bindTimeoutTask.cancel();
 
-			// prepare an "OK" bind response that the session will send back once flagged as 'serverReady'
-			BaseBindResp preparedBindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_OK);
+            // create a default session configuration based on this bind request
+            SmppSessionConfiguration sessionConfiguration = createSessionConfiguration(bindRequest);
 
-			try {
-				// create a new a new session and tie the bind response to it
-				server.createSession(sessionId, channel, sessionConfiguration, preparedBindResponse);
-			} catch (SmppProcessingException e) {
-				logger.warn("Bind request was approved, but createSession failed for connection [{}] with error [{}]", channelName, e.getMessage());
-				// create a failed bind response and send back to connection
-				BaseBindResp bindResponse = server.createBindResponse(bindRequest, e.getErrorCode());
-				this.sendResponsePdu(bindResponse);
-				// cancel the timer task & close connection
-				closeChannelAndCancelTimer();
-				return;
-			}
-		} else if (pdu instanceof EnquireLink) {
-			EnquireLinkResp response = ((EnquireLink) pdu).createResponse();
-			logger.info("Responding to enquire_link with response [{}]", response);
-			this.sendResponsePdu(response);
-			return;
-		} else {
-			logger.warn("Only bind or enquire_link requests are permitted on new connections, closing connection [{}]", channelName);
+            // assign a new identifier for this session
+            Long sessionId = server.nextSessionId();
 
-			// FIXME: we could create a response with an error and THEN close the connection...
+            try {
+                // delegate the bind request upstream to server handler
+                this.server.bindRequested(sessionId, sessionConfiguration, bindRequest);
+            } catch (SmppProcessingException e) {
+                logger.warn("Bind request rejected or failed for connection [{}] with error [{}]", channelName, e.getMessage());
+                // create a failed bind response and send back to connection
+                BaseBindResp bindResponse = server.createBindResponse(bindRequest, e.getErrorCode());
+                this.sendResponsePdu(bindResponse);
+                // cancel the timer task & close connection
+                closeChannelAndCancelTimer();
+                return;
+            }
 
-			// cancel the timer task & close connection
-			closeChannelAndCancelTimer();
-			return;
-		}
+            // if we got there then 98% "bound" -- we just need to create the
+            // new session and tie everything together -- cancel the bind timer
+            this.bindTimeoutTask.cancel();
 
-	}
+            // prepare an "OK" bind response that the session will send back once flagged as 'serverReady'
+            BaseBindResp preparedBindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_OK);
 
-	public void closeChannelAndCancelTimer() {
-		// if the channel is being closed, we should always make sure the timer
-		// bind task is always cancelled as well
-		this.bindTimeoutTask.cancel();
-		// close the channel
-		this.channel.close();
-	}
+            try {
+                // create a new a new session and tie the bind response to it
+                server.createSession(sessionId, channel, sessionConfiguration, preparedBindResponse);
+            } catch (SmppProcessingException e) {
+                logger.warn("Bind request was approved, but createSession failed for connection [{}] with error [{}]", channelName, e.getMessage());
+                // create a failed bind response and send back to connection
+                BaseBindResp bindResponse = server.createBindResponse(bindRequest, e.getErrorCode());
+                this.sendResponsePdu(bindResponse);
+                // cancel the timer task & close connection
+                closeChannelAndCancelTimer();
+                return;
+            }
+        } else if (pdu instanceof EnquireLink) {
+            EnquireLinkResp response = ((EnquireLink) pdu).createResponse();
+            logger.info("Responding to enquire_link with response [{}]", response);
+            this.sendResponsePdu(response);
+            return;
+        } else {
+            logger.warn("Only bind or enquire_link requests are permitted on new connections, closing connection [{}]", channelName);
 
-	@Override
-	public void fireExceptionThrown(Throwable t) {
-		logger.warn("Exception thrown, closing connection [{}]: {}", channelName, t);
-		closeChannelAndCancelTimer();
-	}
+            // FIXME: we could create a response with an error and THEN close the connection...
 
-	@Override
-	public void fireChannelClosed() {
-		logger.info("Connection closed with [{}]", channelName);
-		closeChannelAndCancelTimer();
-	}
+            // cancel the timer task & close connection
+            closeChannelAndCancelTimer();
+            return;
+        }
 
-	protected SmppSessionConfiguration createSessionConfiguration(BaseBind bindRequest) {
-		SmppSessionConfiguration sessionConfiguration = new SmppSessionConfiguration();
-		sessionConfiguration.setName("SmppServerSession." + bindRequest.getSystemId() + "." + bindRequest.getSystemType());
-		sessionConfiguration.setSystemId(bindRequest.getSystemId());
-		sessionConfiguration.setPassword(bindRequest.getPassword());
-		sessionConfiguration.setSystemType(bindRequest.getSystemType());
-		sessionConfiguration.setBindTimeout(server.getConfiguration().getBindTimeout());
-		sessionConfiguration.setAddressRange(bindRequest.getAddressRange());
-		sessionConfiguration.setHost(ChannelUtil.getChannelRemoteHost(channel));
-		sessionConfiguration.setPort(ChannelUtil.getChannelRemotePort(channel));
-		sessionConfiguration.setInterfaceVersion(bindRequest.getInterfaceVersion());
+    }
 
-		LoggingOptions loggingOptions = new LoggingOptions();
-		loggingOptions.setLogPdu(true);
-		sessionConfiguration.setLoggingOptions(loggingOptions);
+    public void closeChannelAndCancelTimer() {
+        // if the channel is being closed, we should always make sure the timer
+        // bind task is always cancelled as well
+        this.bindTimeoutTask.cancel();
+        // close the channel
+        this.channel.close();
+    }
 
-		// handle all 3 types...
-		if (bindRequest instanceof BindTransceiver) {
-			sessionConfiguration.setType(SmppBindType.TRANSCEIVER);
-		} else if (bindRequest instanceof BindReceiver) {
-			sessionConfiguration.setType(SmppBindType.RECEIVER);
-		} else if (bindRequest instanceof BindTransmitter) {
-			sessionConfiguration.setType(SmppBindType.TRANSMITTER);
-		}
+    @Override
+    public void fireExceptionThrown(Throwable t) {
+        logger.warn("Exception thrown, closing connection [{}]: {}", channelName, t);
+        closeChannelAndCancelTimer();
+    }
 
-		// new default options set from server config
-		sessionConfiguration.setWindowSize(server.getConfiguration().getDefaultWindowSize());
-		sessionConfiguration.setWindowWaitTimeout(server.getConfiguration().getDefaultWindowWaitTimeout());
-		sessionConfiguration.setWindowMonitorInterval(server.getConfiguration().getDefaultWindowMonitorInterval());
-		sessionConfiguration.setRequestExpiryTimeout(server.getConfiguration().getDefaultRequestExpiryTimeout());
-		sessionConfiguration.setCountersEnabled(server.getConfiguration().isDefaultSessionCountersEnabled());
+    @Override
+    public void fireChannelClosed() {
+        logger.info("Connection closed with [{}]", channelName);
+        closeChannelAndCancelTimer();
+    }
 
-		return sessionConfiguration;
-	}
+    protected SmppSessionConfiguration createSessionConfiguration(BaseBind bindRequest) {
+        SmppSessionConfiguration sessionConfiguration = new SmppSessionConfiguration();
+        sessionConfiguration.setName("SmppServerSession." + bindRequest.getSystemId() + "." + bindRequest.getSystemType());
+        sessionConfiguration.setSystemId(bindRequest.getSystemId());
+        sessionConfiguration.setPassword(bindRequest.getPassword());
+        sessionConfiguration.setSystemType(bindRequest.getSystemType());
+        sessionConfiguration.setBindTimeout(server.getConfiguration().getBindTimeout());
+        sessionConfiguration.setAddressRange(bindRequest.getAddressRange());
+        sessionConfiguration.setHost(ChannelUtil.getChannelRemoteHost(channel));
+        sessionConfiguration.setPort(ChannelUtil.getChannelRemotePort(channel));
+        sessionConfiguration.setInterfaceVersion(bindRequest.getInterfaceVersion());
 
-	public void sendResponsePdu(PduResponse pdu) {
-		try {
-			// encode the pdu into a buffer
-			ChannelBuffer buffer = server.getTranscoder().encode(pdu);
+        LoggingOptions loggingOptions = new LoggingOptions();
+        loggingOptions.setLogPdu(true);
+        sessionConfiguration.setLoggingOptions(loggingOptions);
 
-			// always log the PDU
-			logger.info("send PDU: {}", pdu);
+        // handle all 3 types...
+        if (bindRequest instanceof BindTransceiver) {
+            sessionConfiguration.setType(SmppBindType.TRANSCEIVER);
+        } else if (bindRequest instanceof BindReceiver) {
+            sessionConfiguration.setType(SmppBindType.RECEIVER);
+        } else if (bindRequest instanceof BindTransmitter) {
+            sessionConfiguration.setType(SmppBindType.TRANSMITTER);
+        }
 
-			// write the pdu out & wait till its written
-			ChannelFuture channelFuture = this.channel.write(buffer).await();
+        // new default options set from server config
+        sessionConfiguration.setWindowSize(server.getConfiguration().getDefaultWindowSize());
+        sessionConfiguration.setWindowWaitTimeout(server.getConfiguration().getDefaultWindowWaitTimeout());
+        sessionConfiguration.setWindowMonitorInterval(server.getConfiguration().getDefaultWindowMonitorInterval());
+        sessionConfiguration.setRequestExpiryTimeout(server.getConfiguration().getDefaultRequestExpiryTimeout());
+        sessionConfiguration.setCountersEnabled(server.getConfiguration().isDefaultSessionCountersEnabled());
 
-			// check if the write was a success
-			if (!channelFuture.isSuccess()) {
-				// the write failed, make sure to throw an exception
-				throw new SmppChannelException(channelFuture.getCause().getMessage(), channelFuture.getCause());
-			}
-		} catch (Exception e) {
-			logger.error("Fatal exception thrown while attempting to send response PDU: {}", e);
-		}
-	}
+        return sessionConfiguration;
+    }
 
-	/**
-	 * Simple task that closes a channel if its not bound within a certain time.
-	 */
-	private final class BindTimeoutTask extends TimerTask {
-		@Override
-		public void run() {
-			logger.warn("Channel not bound within [{}] ms, closing connection [{}]", server.getConfiguration().getBindTimeout(), channelName);
-			channel.close();
-			this.cancel();
-			server.getCounters().incrementBindTimeoutsAndGet();
-		}
-	}
+    public void sendResponsePdu(PduResponse pdu) {
+        try {
+            // encode the pdu into a buffer
+            ChannelBuffer buffer = server.getTranscoder().encode(pdu);
+
+            // always log the PDU
+            logger.info("send PDU: {}", pdu);
+
+            // write the pdu out & wait till its written
+            ChannelFuture channelFuture = this.channel.write(buffer).await();
+
+            // check if the write was a success
+            if (!channelFuture.isSuccess()) {
+                // the write failed, make sure to throw an exception
+                throw new SmppChannelException(channelFuture.getCause().getMessage(), channelFuture.getCause());
+            }
+        } catch (Exception e) {
+            logger.error("Fatal exception thrown while attempting to send response PDU: {}", e);
+        }
+    }
+
+    /**
+     * Simple task that closes a channel if its not bound within a certain time.
+     */
+    private final class BindTimeoutTask extends TimerTask {
+        @Override
+        public void run() {
+            logger.warn("Channel not bound within [{}] ms, closing connection [{}]", server.getConfiguration().getBindTimeout(), channelName);
+            channel.close();
+            this.cancel();
+            server.getCounters().incrementBindTimeoutsAndGet();
+        }
+    }
 }

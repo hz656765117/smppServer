@@ -8,76 +8,97 @@ import java.io.Serializable;
  * @Description:
  */
 public class MsgVo implements Serializable {
-	public String msgId;
+    public String msgId;
 
-	public String smppUser;
+    public String smppUser;
 
-	public String smppPwd;
+    public String smppPwd;
 
-	public String senderId;
+    public String senderId;
 
-	public Integer sendSize;
+    public Integer sendSize;
 
-	public long sendTime;
+    public long sendTime;
 
-	public MsgVo() {
-	}
+    public Integer port;
 
-	public MsgVo(String msgId, String smppUser, String smppPwd, String senderId) {
-		this.msgId = msgId;
-		this.smppUser = smppUser;
-		this.smppPwd = smppPwd;
-		this.senderId = senderId;
-		this.sendSize = 1;
-		this.sendTime = System.currentTimeMillis();
-	}
+    public MsgVo() {
+    }
 
-	public String getMsgId() {
-		return msgId;
-	}
+    public MsgVo(String msgId, String smppUser, String smppPwd, String senderId) {
+        this.msgId = msgId;
+        this.smppUser = smppUser;
+        this.smppPwd = smppPwd;
+        this.senderId = senderId;
+        this.sendSize = 1;
+        this.sendTime = System.currentTimeMillis();
+        this.port = 0;
+    }
 
-	public void setMsgId(String msgId) {
-		this.msgId = msgId;
-	}
+    public MsgVo(String msgId, String smppUser, String smppPwd, String senderId, Integer port) {
+        this.msgId = msgId;
+        this.smppUser = smppUser;
+        this.smppPwd = smppPwd;
+        this.senderId = senderId;
+        this.sendSize = 1;
+        this.sendTime = System.currentTimeMillis();
+        this.port = port;
+    }
 
-	public String getSmppUser() {
-		return smppUser;
-	}
+    public String getMsgId() {
+        return msgId;
+    }
 
-	public void setSmppUser(String smppUser) {
-		this.smppUser = smppUser;
-	}
+    public void setMsgId(String msgId) {
+        this.msgId = msgId;
+    }
 
-	public String getSmppPwd() {
-		return smppPwd;
-	}
+    public String getSmppUser() {
+        return smppUser;
+    }
 
-	public void setSmppPwd(String smppPwd) {
-		this.smppPwd = smppPwd;
-	}
+    public void setSmppUser(String smppUser) {
+        this.smppUser = smppUser;
+    }
 
-	public String getSenderId() {
-		return senderId;
-	}
+    public String getSmppPwd() {
+        return smppPwd;
+    }
 
-	public void setSenderId(String senderId) {
-		this.senderId = senderId;
-	}
+    public void setSmppPwd(String smppPwd) {
+        this.smppPwd = smppPwd;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
+    }
 
 
-	public Integer getSendSize() {
-		return sendSize;
-	}
+    public Integer getSendSize() {
+        return sendSize;
+    }
 
-	public void setSendSize(Integer sendSize) {
-		this.sendSize = sendSize;
-	}
+    public void setSendSize(Integer sendSize) {
+        this.sendSize = sendSize;
+    }
 
-	public long getSendTime() {
-		return sendTime;
-	}
+    public long getSendTime() {
+        return sendTime;
+    }
 
-	public void setSendTime(long sendTime) {
-		this.sendTime = sendTime;
-	}
+    public void setSendTime(long sendTime) {
+        this.sendTime = sendTime;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 }

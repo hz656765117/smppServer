@@ -9,9 +9,9 @@ package com.hz.smsgate.business.smpp.channel;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import javax.net.ssl.SSLEngine;
 
 /**
  * Channel handler for server SMPP sessions.
- * 
+ *
  * @author joelauer (twitter: @jjlauer or <a href="http://twitter.com/jjlauer" target=window>http://twitter.com/jjlauer</a>)
  */
 @ChannelPipelineCoverage("all")
@@ -71,19 +71,19 @@ public class SmppServerConnector extends SimpleChannelUpstreamHandler {
         logger.info("New channel from [{}]", channelName);
         Thread.currentThread().setName(currentThreadName);
 
-	// add SSL handler
+        // add SSL handler
         if (server.getConfiguration().isUseSsl()) {
-	    SslConfiguration sslConfig = server.getConfiguration().getSslConfiguration();
-	    if (sslConfig == null) throw new IllegalStateException("sslConfiguration must be set");
-	    SslContextFactory factory = new SslContextFactory(sslConfig);
-	    SSLEngine sslEngine = factory.newSslEngine();
-	    sslEngine.setUseClientMode(false);
-	    channel.getPipeline().addLast(SmppChannelConstants.PIPELINE_SESSION_SSL_NAME, new SslHandler(sslEngine));
-	}
+            SslConfiguration sslConfig = server.getConfiguration().getSslConfiguration();
+            if (sslConfig == null) throw new IllegalStateException("sslConfiguration must be set");
+            SslContextFactory factory = new SslContextFactory(sslConfig);
+            SSLEngine sslEngine = factory.newSslEngine();
+            sslEngine.setUseClientMode(false);
+            channel.getPipeline().addLast(SmppChannelConstants.PIPELINE_SESSION_SSL_NAME, new SslHandler(sslEngine));
+        }
 
         // add a new instance of a thread renamer
         channel.getPipeline().addLast(SmppChannelConstants.PIPELINE_SESSION_THREAD_RENAMER_NAME, new SmppSessionThreadRenamer(threadName));
-        
+
         // add a new instance of a decoder (that takes care of handling frames)
         channel.getPipeline().addLast(SmppChannelConstants.PIPELINE_SESSION_PDU_DECODER_NAME, new SmppSessionPduDecoder(server.getTranscoder()));
 

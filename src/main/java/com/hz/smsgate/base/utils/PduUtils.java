@@ -155,6 +155,65 @@ public class PduUtils {
     }
 
 
+    public static SmppSession getServerSmppSession(String smppUser, String smppPwd, Integer port) {
+        SmppSession smppSession = null;
+        try {
+            SmppUserVo smppUserVo = getSmppUserByUserPwd(smppUser, smppPwd);
+
+            if (DefaultSmppServer.smppSessionList == null || DefaultSmppServer.smppSessionList.size() < 1) {
+                LOGGER.error("{}-处理状态报告异常，未能获取到服务端连接(通道为：{}，systemId为：({}),smppUser({}),smppPwd({}))-------", Thread.currentThread().getName(), smppUserVo.getSenderid(), smppUserVo.getSystemid(), smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                return smppSession;
+            }
+
+            smppSession = getSmppSessionBySmppUser(smppUserVo, port);
+
+
+            if (smppSession == null) {
+                return getServerSmppSession(smppUser, smppPwd);
+            }
+        } catch (Exception e) {
+            LOGGER.error("{}-处理状态报告异常，未能匹配到服务端连接(smppUser({}),smppPwd({}))-------", Thread.currentThread().getName(), smppUser, smppPwd, e);
+        }
+
+        return smppSession;
+    }
+
+
+    public static int getCountByUserPwd(String smppUser, String smppPwd) {
+        int count = 0;
+        for (SmppSession session : DefaultSmppServer.smppSessionList) {
+            if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
+                LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
+                continue;
+            }
+            if (session.getConfiguration().getSystemId().equals(smppUser) && session.getConfiguration().getPassword().equals(smppPwd)) {
+                count++;
+                continue;
+            }
+        }
+        return count;
+    }
+
+
+    public static SmppSession getSmppSessionBySmppUser(SmppUserVo smppUserVo, Integer port) {
+        if (smppUserVo == null) {
+            return null;
+        }
+        SmppSession smppSession = null;
+        for (SmppSession session : DefaultSmppServer.smppSessionList) {
+            if (StringUtils.isBlank(session.getConfiguration().getSystemId()) || StringUtils.isBlank(session.getConfiguration().getPassword()) || port == null || port <= 0) {
+                LOGGER.error("客户端连接异常systemid:{},password:{}", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+                continue;
+            }
+            if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd()) && port == session.getConfiguration().getPort()) {
+                smppSession = session;
+                break;
+            }
+        }
+        return smppSession;
+    }
+
+
     public static SmppSession getSmppSessionBySmppUser(SmppUserVo smppUserVo) {
         if (smppUserVo == null) {
             return null;

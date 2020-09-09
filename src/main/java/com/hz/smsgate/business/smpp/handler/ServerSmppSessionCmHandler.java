@@ -106,7 +106,7 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 						return submitResp;
 					}
 
-					MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress());
+					MsgVo msgVo = new MsgVo(msgid, session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress(),session.getConfiguration().getPort());
 
 					try {
 						serverSmppSessionCmHandler.redisUtil.hmSet(SmppServerConstants.CM_MSGID_CACHE, msgid, msgVo);
