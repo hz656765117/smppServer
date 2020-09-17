@@ -92,7 +92,6 @@ public class SmppServerInit {
 
 
 	public void initChannels() {
-		CHANNL_REL.clear();
 		Map<String, SessionKey> map = new LinkedHashMap<>();
 
 		List<OperatorVo> allOperator = smppService.getAllOperator();
@@ -132,14 +131,13 @@ public class SmppServerInit {
 				continue;
 			}
 		}
-		CHANNL_SP_REL.clear();
 		CHANNL_SP_REL = configMap;
 	}
 
 
 	public void initMkList() {
-		CHANNEL_MK_LIST.clear();
 		List<OperatorVo> allOperator = smppService.getAllOperator();
+		CHANNEL_MK_LIST.clear();
 		for (OperatorVo operatorVo : allOperator) {
 			if ("HP01".equals(operatorVo.getSystemid()) || "HP02".equals(operatorVo.getSystemid()) || "HP03".equals(operatorVo.getSystemid()) || "HP04".equals(operatorVo.getSystemid())) {
 				SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
@@ -151,10 +149,10 @@ public class SmppServerInit {
 	}
 
 	public void initYxj() {
+		List<OperatorVo> allOperator = smppService.getAllOperator();
 		CHANNEL_OPT_LIST.clear();
 		CHANNEL_TZ_LIST.clear();
 		CHANNEL_YX_LIST.clear();
-		List<OperatorVo> allOperator = smppService.getAllOperator();
 		for (OperatorVo operatorVo : allOperator) {
 			SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
 			if (operatorVo.getType() != null && 0 == operatorVo.getType()) {
@@ -192,7 +190,6 @@ public class SmppServerInit {
 
 
 	public void initConfigs() {
-		SMPP_USER.clear();
 		SMPP_USER = smppService.getAllSmppUser();
 	}
 

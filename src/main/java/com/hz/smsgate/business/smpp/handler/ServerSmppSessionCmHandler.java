@@ -103,6 +103,8 @@ public class ServerSmppSessionCmHandler extends DefaultSmppSessionHandler {
 
 					if (StringUtils.isBlank(submitSm.getSystemId())) {
 						logger.error("systemId({}),password({}),senderId({})  获取smpp账号失败，该短信（mbl：{}，content：{}）不下发------------- ", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword(), submitSm.getSourceAddress().getAddress(), submitSm.getDestAddress().getAddress(), new String(submitSm.getShortMessage()));
+						submitResp.setMessageId(msgid);
+						submitResp.calculateAndSetCommandLength();
 						return submitResp;
 					}
 
