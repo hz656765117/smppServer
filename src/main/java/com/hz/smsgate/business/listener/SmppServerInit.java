@@ -139,7 +139,7 @@ public class SmppServerInit {
 		List<OperatorVo> allOperator = smppService.getAllOperator();
 		CHANNEL_MK_LIST.clear();
 		for (OperatorVo operatorVo : allOperator) {
-			if ("HP01".equals(operatorVo.getSystemid()) || "HP02".equals(operatorVo.getSystemid()) || "HP03".equals(operatorVo.getSystemid()) || "HP04".equals(operatorVo.getSystemid())) {
+			if (operatorVo.getSystemid().toUpperCase().startsWith("HP")) {
 				SessionKey sessionKey = new SessionKey(operatorVo.getSystemid(), operatorVo.getChannel());
 				SessionKey sessionKey1 = SmppServerInit.CHANNL_REL.get(operatorVo.getChannel());
 				CHANNEL_MK_LIST.add(sessionKey);
