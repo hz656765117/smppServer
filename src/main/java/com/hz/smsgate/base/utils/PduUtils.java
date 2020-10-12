@@ -182,14 +182,20 @@ public class PduUtils {
     public static int getCountByUserPwd(String smppUser, String smppPwd) {
         int count = 0;
         for (SmppSession session : DefaultSmppServer.smppSessionList) {
-            if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
-                LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
-                continue;
+
+            try {
+                if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
+                    LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
+                    continue;
+                }
+                if (smppUser.equals(session.getConfiguration().getSystemId()) && smppPwd.equals(session.getConfiguration().getPassword())) {
+                    count++;
+                    continue;
+                }
+            }catch (Exception e){
+                LOGGER.error("计数异常{}",e);
             }
-            if (session.getConfiguration().getSystemId().equals(smppUser) && session.getConfiguration().getPassword().equals(smppPwd)) {
-                count++;
-                continue;
-            }
+
         }
         return count;
     }
