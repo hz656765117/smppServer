@@ -4,6 +4,7 @@ import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.constants.StaticValue;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
+import com.hz.smsgate.base.smpp.pojo.SessionKey;
 import com.hz.smsgate.base.smpp.pojo.SmppSession;
 import com.hz.smsgate.base.smpp.utils.DeliveryReceipt;
 import com.hz.smsgate.business.listener.SmppServerInit;
@@ -17,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Auther: huangzhuo
@@ -181,22 +184,31 @@ public class PduUtils {
 
     public static int getCountByUserPwd(String smppUser, String smppPwd) {
         int count = 0;
-        for (SmppSession session : DefaultSmppServer.smppSessionList) {
 
+        Iterator<SmppSession> iterator = DefaultSmppServer.smppSessionList.iterator();
+        while (iterator.hasNext()) {
+            SmppSession session = iterator.next();
             try {
                 if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
                     LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
                     continue;
                 }
-                if (smppUser.equals(session.getConfiguration().getSystemId()) && smppPwd.equals(session.getConfiguration().getPassword())) {
-                    count++;
-                    continue;
-                }
-            }catch (Exception e){
-                LOGGER.error("计数异常{}",e);
-            }
 
+                if (session != null && session.getConfiguration() != null) {
+                    if (smppUser.equals(session.getConfiguration().getSystemId()) && smppPwd.equals(session.getConfiguration().getPassword())) {
+                        count++;
+                        continue;
+                    }
+                } else {
+                    iterator.remove();
+                    LOGGER.error("smppUser{},smppPwd{}bind时session为空或者Configuration为空,并移除该smppsession", smppUser, smppPwd);
+                }
+            } catch (Exception e) {
+                LOGGER.error("smppUser{},smppPwd{},计数异常{}", smppUser, smppPwd, e);
+                continue;
+            }
         }
+
         return count;
     }
 
