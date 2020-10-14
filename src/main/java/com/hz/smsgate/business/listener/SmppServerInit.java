@@ -210,8 +210,6 @@ public class SmppServerInit {
 	private static void initMutiThread() {
 		RptRedisConsumer rptRedisConsumer = new RptRedisConsumer();
 
-		ConfigLoadThread configLoadThread = new ConfigLoadThread();
-
 		MsgIdTimeOutRemoveThread msgIdTimeOutRemoveThread = new MsgIdTimeOutRemoveThread();
 		ThreadPoolHelper.executeTask(msgIdTimeOutRemoveThread);
 
@@ -219,7 +217,6 @@ public class SmppServerInit {
 		ThreadPoolHelper.executeTask(rptRedisConsumer);
 		ThreadPoolHelper.executeTask(rptRedisConsumer);
 
-		ThreadPoolHelper.executeTask(configLoadThread);
 
 	}
 

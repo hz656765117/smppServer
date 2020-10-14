@@ -200,8 +200,8 @@ public class PduUtils {
                         continue;
                     }
                 } else {
-                    iterator.remove();
-                    LOGGER.error("smppUser{},smppPwd{}bind时session为空或者Configuration为空,并移除该smppsession", smppUser, smppPwd);
+//                    iterator.remove();
+                    LOGGER.error("smppUser{},smppPwd{}bind时session为空或者Configuration为空", smppUser, smppPwd);
                 }
             } catch (Exception e) {
                 LOGGER.error("smppUser{},smppPwd{},计数异常{}", smppUser, smppPwd, e);
