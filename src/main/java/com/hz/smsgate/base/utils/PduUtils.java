@@ -187,8 +187,8 @@ public class PduUtils {
 
         Iterator<SmppSession> iterator = DefaultSmppServer.smppSessionList.iterator();
         while (iterator.hasNext()) {
-            SmppSession session = iterator.next();
             try {
+                SmppSession session = iterator.next();
                 if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
                     LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
                     continue;

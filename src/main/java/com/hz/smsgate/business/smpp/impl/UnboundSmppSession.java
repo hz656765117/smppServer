@@ -96,15 +96,16 @@ public class UnboundSmppSession implements SmppSessionChannelListener {
 
 
             int maxConnectionSize = server.getConfiguration().getMaxConnectionSize();
-			int countByUserPwd = PduUtils.getCountByUserPwd(bindRequest.getSystemId(), bindRequest.getPassword());
-			if (countByUserPwd > maxConnectionSize) {
-				// create a failed bind response and send back to connection
-				BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_BINDFAIL);
-				this.sendResponsePdu(bindResponse);
-				// cancel the timer task & close connection
-				closeChannelAndCancelTimer();
-				return;
-			}
+            int countByUserPwd = PduUtils.getCountByUserPwd(bindRequest.getSystemId(), bindRequest.getPassword());
+            if (countByUserPwd > maxConnectionSize) {
+                logger.error("当前客户端session的账号为{},当前连接数为{}，最大连接数为{}，拒绝其连接。", bindRequest.getSystemId(), countByUserPwd, maxConnectionSize);
+                // create a failed bind response and send back to connection
+                BaseBindResp bindResponse = server.createBindResponse(bindRequest, SmppConstants.STATUS_BINDFAIL);
+                this.sendResponsePdu(bindResponse);
+                // cancel the timer task & close connection
+                closeChannelAndCancelTimer();
+                return;
+            }
 
 
             // create a default session configuration based on this bind request
