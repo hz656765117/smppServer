@@ -65,6 +65,10 @@ spring:
 #    timeout: 0
 
 
+logging:
+  config: classpath:logging-config.xml
+
+
 
  
  
