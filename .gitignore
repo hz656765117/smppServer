@@ -5,6 +5,7 @@ HELP.md
 src/test/*
 
 /logger/
+log/*
 
 ### STS ###
 .apt_generated
