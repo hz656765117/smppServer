@@ -186,9 +186,16 @@ public class PduUtils {
         int count = 0;
 
         Iterator<SmppSession> iterator = DefaultSmppServer.smppSessionList.iterator();
+        SmppSession session;
         while (iterator.hasNext()) {
             try {
-                SmppSession session = iterator.next();
+                session = iterator.next();
+            } catch (Exception e) {
+                LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
+                return count;
+            }
+            try {
+
                 if (StringUtils.isBlank(smppUser) || StringUtils.isBlank(smppPwd)) {
                     LOGGER.error("客户端连接异常systemid:{},password:{}", smppUser, smppPwd);
                     continue;
@@ -219,10 +226,16 @@ public class PduUtils {
         }
         SmppSession smppSession = null;
         for (SmppSession session : DefaultSmppServer.smppSessionList) {
-            if (StringUtils.isBlank(session.getConfiguration().getSystemId()) || StringUtils.isBlank(session.getConfiguration().getPassword()) || port == null || port <= 0) {
-                LOGGER.error("客户端连接异常systemid:{},password:{}", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+            try {
+                if (StringUtils.isBlank(session.getConfiguration().getSystemId()) || StringUtils.isBlank(session.getConfiguration().getPassword()) || port == null || port <= 0) {
+                    LOGGER.error("客户端连接异常systemid:{},password:{}", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+                    continue;
+                }
+            } catch (Exception e) {
+                LOGGER.error("systemid:{},password:{}获取session异常，继续获取", smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
                 continue;
             }
+
             if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd()) && port == session.getConfiguration().getPort()) {
                 smppSession = session;
                 break;
