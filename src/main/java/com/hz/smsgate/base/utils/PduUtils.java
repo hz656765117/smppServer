@@ -131,7 +131,10 @@ public class PduUtils {
             }
 
         }
-        return null;
+
+        SmppUserVo smppUserByUserPwd = getSmppUserByUserPwd(smppUser, smppPwd);
+
+        return smppUserByUserPwd;
     }
 
 
@@ -232,9 +235,20 @@ public class PduUtils {
             return null;
         }
 
+
+        Iterator<SmppSession> iterator = DefaultSmppServer.smppSessionList.iterator();
+        SmppSession session;
         SmppSession smppSession = null;
-        SmppSessionConfiguration configuration = null;
-        for (SmppSession session : DefaultSmppServer.smppSessionList) {
+        SmppSessionConfiguration configuration;
+        while (iterator.hasNext()) {
+            try {
+                session = iterator.next();
+            } catch (Exception e) {
+                LOGGER.error("session为空，客户端连接异常systemid:{},password:{}", smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                break;
+            }
+
+
             try {
                 configuration = session.getConfiguration();
                 if(configuration == null){
@@ -257,6 +271,8 @@ public class PduUtils {
                 break;
             }
         }
+
+
         return smppSession;
     }
 
@@ -265,9 +281,22 @@ public class PduUtils {
         if (smppUserVo == null) {
             return null;
         }
+
+
+
+        Iterator<SmppSession> iterator = DefaultSmppServer.smppSessionList.iterator();
+        SmppSession session;
         SmppSession smppSession = null;
-        SmppSessionConfiguration configuration = null;
-        for (SmppSession session : DefaultSmppServer.smppSessionList) {
+        SmppSessionConfiguration configuration;
+        while (iterator.hasNext()) {
+            try {
+                session = iterator.next();
+            } catch (Exception e) {
+                LOGGER.error("session为空，客户端连接异常systemid:{},password:{}", smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                break;
+            }
+
+
             try {
                 configuration = session.getConfiguration();
                 if(configuration == null){
@@ -290,6 +319,7 @@ public class PduUtils {
                 break;
             }
         }
+
         return smppSession;
     }
 

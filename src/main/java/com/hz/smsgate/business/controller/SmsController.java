@@ -350,7 +350,7 @@ public class SmsController {
                 if (StringUtils.isBlank(systemId) || StringUtils.isBlank(senderId)) {
                     systemId = areaList.get(0).getSystemid();
                     senderId = areaList.get(0).getSenderid();
-                    LOGGER.error("手机号（{}），号段({})未配置到具体发送账号上,使用systemId（{}）和senderId（{}）发送", mbl, numSeg, systemId, senderId);
+                    LOGGER.warn("手机号（{}），号段({})未配置到具体发送账号上,使用systemId（{}）和senderId（{}）发送", mbl, numSeg, systemId, senderId);
                 }
 
 
