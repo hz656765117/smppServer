@@ -2,6 +2,7 @@ package com.hz.smsgate.base.utils;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.hz.smsgate.base.constants.StaticValue;
+import com.hz.smsgate.base.smpp.config.SmppSessionConfiguration;
 import com.hz.smsgate.base.smpp.pdu.DeliverSm;
 import com.hz.smsgate.base.smpp.pdu.SubmitSm;
 import com.hz.smsgate.base.smpp.pojo.SessionKey;
@@ -221,14 +222,29 @@ public class PduUtils {
 
 
     public static SmppSession getSmppSessionBySmppUser(SmppUserVo smppUserVo, Integer port) {
-        if (smppUserVo == null) {
+        if (smppUserVo == null || port == null) {
+            LOGGER.error("smppUserVo为空");
             return null;
         }
+
+        if ( port == null) {
+            LOGGER.error("port为空，客户端连接异常systemid:{},password:{}", smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+            return null;
+        }
+
         SmppSession smppSession = null;
+        SmppSessionConfiguration configuration = null;
         for (SmppSession session : DefaultSmppServer.smppSessionList) {
             try {
-                if (StringUtils.isBlank(session.getConfiguration().getSystemId()) || StringUtils.isBlank(session.getConfiguration().getPassword()) || port == null || port <= 0) {
-                    LOGGER.error("客户端连接异常systemid:{},password:{}", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+                configuration = session.getConfiguration();
+                if(configuration == null){
+                    LOGGER.error("configuration为空，客户端连接异常systemid:{},password:{}", smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                    continue;
+                }
+
+
+                if (StringUtils.isBlank(configuration.getSystemId()) || StringUtils.isBlank(configuration.getPassword()) || port == null || port <= 0) {
+                    LOGGER.error("客户端连接异常systemid:{},password:{}", configuration.getSystemId(), configuration.getPassword());
                     continue;
                 }
             } catch (Exception e) {
@@ -236,7 +252,7 @@ public class PduUtils {
                 continue;
             }
 
-            if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd()) && port == session.getConfiguration().getPort()) {
+            if (configuration.getSystemId().equals(smppUserVo.getSmppUser()) && configuration.getPassword().equals(smppUserVo.getSmppPwd()) && port == configuration.getPort()) {
                 smppSession = session;
                 break;
             }
@@ -250,10 +266,17 @@ public class PduUtils {
             return null;
         }
         SmppSession smppSession = null;
+        SmppSessionConfiguration configuration = null;
         for (SmppSession session : DefaultSmppServer.smppSessionList) {
             try {
-                if (StringUtils.isBlank(session.getConfiguration().getSystemId()) || StringUtils.isBlank(session.getConfiguration().getPassword())) {
-                    LOGGER.error("客户端连接异常systemid:{},password:{}", session.getConfiguration().getSystemId(), session.getConfiguration().getPassword());
+                configuration = session.getConfiguration();
+                if(configuration == null){
+                    LOGGER.error("configuration为空，客户端连接异常systemid:{},password:{}", smppUserVo.getSmppUser(), smppUserVo.getSmppPwd());
+                    continue;
+                }
+
+                if (StringUtils.isBlank(configuration.getSystemId()) || StringUtils.isBlank(configuration.getPassword())) {
+                    LOGGER.error("客户端连接异常systemid:{},password:{}", configuration.getSystemId(), configuration.getPassword());
                     continue;
                 }
             } catch (Exception e) {
@@ -262,8 +285,7 @@ public class PduUtils {
             }
 
 
-
-            if (session.getConfiguration().getSystemId().equals(smppUserVo.getSmppUser()) && session.getConfiguration().getPassword().equals(smppUserVo.getSmppPwd())) {
+            if (configuration.getSystemId().equals(smppUserVo.getSmppUser()) && configuration.getPassword().equals(smppUserVo.getSmppPwd())) {
                 smppSession = session;
                 break;
             }
